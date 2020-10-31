@@ -11,7 +11,7 @@ pub struct Piece {
 
 impl Piece {
     pub fn new(color: [f32; 4], rots: Rotations) -> Self {
-        Piece {color, rots, idx: 0}
+        Piece { color, rots, idx: 0 }
     }
 
     pub fn shift(&mut self, c: (i8, i8)) {
@@ -25,17 +25,11 @@ impl Piece {
 
     pub fn rotate(&mut self, dir: bool) {
         self.idx = if dir { // clockwise
-            if self.idx < ROT-1 {
-                self.idx + 1
-            } else {
-                0
-            }
+            if self.idx < ROT-1 { self.idx + 1 }
+            else { 0 }
         } else { // counter-clockwise
-            if self.idx > 0 {
-                self.idx - 1
-            } else {
-                ROT-1
-            }
+            if self.idx > 0 { self.idx - 1 }
+            else { ROT-1 }
         }
     }
 
@@ -61,6 +55,10 @@ impl Piece {
             }
         }
         (x, y)
+    }
+
+    pub fn fix(&mut self, maxx: i8, maxy: i8) {
+        self.shift(self.validate(maxx, maxy));
     }
 
     pub fn get_shape(&self) -> &Vec<(i8, i8)> {
