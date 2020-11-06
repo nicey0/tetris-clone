@@ -39,8 +39,7 @@ impl Piece {
         for i in 0..self.shape.len() {
             shape[i] = (self.shape[i].0 + c, self.shape[i].1);
             origin = (self.origin.0 + c as f64, self.origin.1);
-            if shape[i].0 < 0 || shape[i].0 >= self.maxx 
-                    || pieces.contains(&shape[i]) {
+            if shape[i].0 < 0 || shape[i].0 >= self.maxx || pieces.contains(&shape[i]) {
                 return // return if illegal position
             }
         }
@@ -83,7 +82,7 @@ impl Piece {
             shape[i].1 = (rot_y * -1.0 + self.origin.1).round() as i8;
             // return if illegal position
             if shape[i].0 < 0 || shape[i].0 >= self.maxx || shape[i].1 < 0 || shape[i].1 >= self.maxy ||
-                    pieces.contains(&shape[i]) {
+            pieces.contains(&shape[i]) {
                 return
             }
         }
