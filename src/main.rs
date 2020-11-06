@@ -41,9 +41,9 @@ fn print_board(p: &Piece, pieces: &Vec<Point>) {
             if s.contains(&(x, y)) {
                 print!("██");
             } else if pieces.contains(&(x, y)) {
-                print!("🮕🮕");
+                print!("▒▒");
             } else {
-                print!(" .");
+                print!("..");
             }
         }
         println!("");
