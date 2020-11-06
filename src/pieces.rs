@@ -99,6 +99,11 @@ impl Piece {
     }
 }
 
+/* piece constructors */
+// [r, g, b, a]
+// [shape]
+// (origin x, origin y)
+// maxx, maxy, boardy
 
 pub fn i(maxx: i8, maxy: i8, boardy: i8) -> Piece {
     Piece::new([1.0, 1.0, 0.0, 1.0],
