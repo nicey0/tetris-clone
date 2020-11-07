@@ -22,8 +22,9 @@ const MAXX: i8 = 10;
 const MAXY: i8 = 26;
 const BOARDY: i8 = 22;
 
-const CELLSIZE: i16 = 25;
-const WINSIZE: [f64; 2] = [(MAXX as i16*CELLSIZE) as f64, (MAXY as i16*CELLSIZE) as f64];
+const CELLSIZE: f64 = 20.0;
+const WINSIZE: [f64; 2] = [MAXX as f64 * CELLSIZE, BOARDY as f64 * CELLSIZE];
+const TOP_PAD: f64 = (MAXY - BOARDY) as f64 * CELLSIZE;
 
 const PIECES: [fn(i8, i8, i8) -> Piece; 7] = [i, o, j, l, s, z, t];
 
@@ -82,39 +83,67 @@ fn main() {
     let mut gl = GlGraphics::new(opengl);
     let mut events = Events::new(EventSettings::new());
 
-    loop {
-        print!("\x1B[2J\x1B[1;1H"); // clear scr
-        println!("{}", rate);
-        //print_board(&p, &pieces);
-        match stdin.read_line(&mut input) {
-            Ok(_) => {
-                if      &input.trim()[..] == "h" { p.side(-1, &pieces); }
-                else if &input.trim()[..] == "l" { p.side(1, &pieces); }
-                else if &input.trim()[..] == "r" { p.rotate(&pieces); }
-                input = String::new();
-            },
-            _ => {},
-        }
-
-        //p.side(1, &pieces);
-        //p.rotate(&pieces);
-        rate += 1;
-        if rate == RATE {
-            rate = 0;
-            match p.down(1, &pieces) { // gravity
-                States::Stop => { // if illegal position, stop moving and instantiate new piece
-                    for &s in p.get_shape().iter() {
-                        pieces.push(s);
-                        colors.push(*p.get_color());
-                    }
-                    check_clear(&mut pieces);
-                    p = random_piece();
-                }, // if outside screen & illegal position, end game
-                States::End => break,
+    // Main loop
+    while let Some(e) = events.next(&mut window) {
+        println!("loop");
+        if let Some(_) = e.update_args() {
+            println!("updating...");
+            // UPDATE
+            print!("\x1B[2J\x1B[1;1H"); // clear scr
+            println!("{}", rate);
+            match stdin.read_line(&mut input) {
+                Ok(_) => {
+                    if      &input.trim()[..] == "h" { p.side(-1, &pieces); }
+                    else if &input.trim()[..] == "l" { p.side(1, &pieces); }
+                    else if &input.trim()[..] == "r" { p.rotate(&pieces); }
+                    input = String::new();
+                },
                 _ => {},
-            };
+            }
+
+            //p.side(1, &pieces);
+            //p.rotate(&pieces);
+            rate += 1;
+            if rate == RATE {
+                rate = 0;
+                match p.down(1, &pieces) { // gravity
+                    States::Stop => { // if illegal position, stop moving and instantiate new piece
+                        for &s in p.get_shape().iter() {
+                            pieces.push(s);
+                            colors.push(*p.get_color());
+                        }
+                        check_clear(&mut pieces);
+                        p = random_piece();
+                    }, // if outside screen & illegal position, end game
+                    States::End => break,
+                    _ => {},
+                };
+            }
+            thread::sleep(time::Duration::from_millis(20));
+        } else if let Some(args) = e.render_args() {
+            println!("rendering...");
+            // RENDER
+            gl.draw(args.viewport(), |c, g| {
+                clear([0.0, 0.0, 0.0, 1.0], g);
+                let s = p.get_shape();
+                for y in MAXY-BOARDY..MAXY {
+                    for x in 0..MAXX {
+                        if s.contains(&(x, y)) || pieces.contains(&(x, y)) {
+                            // draw block
+                            rectangle(
+                                [1.0, 0.0, 1.0, 1.0],
+                                [
+                                    x as f64 * CELLSIZE,
+                                    y as f64 * CELLSIZE - TOP_PAD,
+                                    CELLSIZE,
+                                    CELLSIZE
+                                ], c.transform, g
+                            );
+                        }
+                    }
+                }
+            })
         }
-        thread::sleep(time::Duration::from_millis(20));
     }
 }
 
