@@ -16,8 +16,7 @@ const PIECES: [fn(i8, i8, i8) -> Piece; 7] = [i, o, j, l, s, z, t];
 const RATE: i8 = 1; // lower rate = faster drop
 
 fn random_piece() -> Piece {
-    //PIECES.choose(&mut rand::thread_rng()).unwrap()(MAXX, MAXY, BOARDY)
-    PIECES[0](MAXX, MAXY, BOARDY)
+    PIECES.choose(&mut rand::thread_rng()).unwrap()(MAXX, MAXY, BOARDY)
 }
 
 fn check_clear(pieces: &mut Vec<Point>) {
