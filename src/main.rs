@@ -20,11 +20,13 @@ fn random_piece() -> Piece {
 }
 
 fn check_clear(pieces: &mut Vec<Point>) {
+    // Vector of cleared y's
     let mut cleared: Vec<i8> = Vec::with_capacity(BOARDY as usize);
-    let mut length: HashMap<i8, i8> = HashMap::new();
+    // HashMap holding {y: width}
+    let mut widths: HashMap<i8, i8> = HashMap::new();
     for i in 0..pieces.len() {
-        *length.entry(pieces[i].1).or_insert(0) += 1;
-        if length[&pieces[i].1] >= MAXX {
+        *widths.entry(pieces[i].1).or_insert(0) += 1;
+        if widths[&pieces[i].1] >= MAXX { // if line is cleared, add y to cleared
             cleared.push(pieces[i].1);
         }
     }
