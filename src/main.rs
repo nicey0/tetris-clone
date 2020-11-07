@@ -1,20 +1,46 @@
 extern crate rand;
+use rand::seq::SliceRandom;
 
 mod pieces;
-
 use pieces::*;
-use std::{thread, time};
-use rand::seq::SliceRandom;
-use std::io;
+
+use std::{io, thread, time};
+use std::collections::HashMap;
 
 const MAXX: i8 = 10;
 const MAXY: i8 = 26;
 const BOARDY: i8 = 22;
+
 const PIECES: [fn(i8, i8, i8) -> Piece; 7] = [i, o, j, l, s, z, t];
-const RATE: i16 = 4;
+
+const RATE: i8 = 1; // lower rate = faster drop
 
 fn random_piece() -> Piece {
-    PIECES.choose(&mut rand::thread_rng()).unwrap()(MAXX, MAXY, BOARDY)
+    //PIECES.choose(&mut rand::thread_rng()).unwrap()(MAXX, MAXY, BOARDY)
+    PIECES[0](MAXX, MAXY, BOARDY)
+}
+
+fn check_clear(pieces: &mut Vec<Point>) {
+    let mut cleared: Vec<i8> = Vec::with_capacity(BOARDY as usize);
+    let mut length: HashMap<i8, i8> = HashMap::new();
+    for i in 0..pieces.len() {
+        *length.entry(pieces[i].1).or_insert(0) += 1;
+        if length[&pieces[i].1] >= MAXX {
+            cleared.push(pieces[i].1);
+        }
+    }
+    let mut higher: i8 = 0;
+    *pieces = pieces.iter_mut().filter_map(|coor| {
+        higher = 0;
+        for &y in cleared.iter() {
+            if coor.1 == y {
+                return None
+            } else if coor.1 < y {
+                higher += 1;
+            }
+        }
+        Some((coor.0, coor.1 + higher))
+    }).collect();
 }
 
 fn main() {
@@ -35,7 +61,7 @@ fn main() {
         print_board(&p, &pieces);
         match stdin.read_line(&mut input) {
             Ok(_) => {
-                if &input.trim()[..] == "h" { p.side(-1, &pieces); }
+                if      &input.trim()[..] == "h" { p.side(-1, &pieces); }
                 else if &input.trim()[..] == "l" { p.side(1, &pieces); }
                 else if &input.trim()[..] == "r" { p.rotate(&pieces); }
                 input = String::new();
@@ -54,6 +80,7 @@ fn main() {
                         pieces.push(s);
                         colors.push(*p.get_color());
                     }
+                    check_clear(&mut pieces);
                     p = random_piece();
                 }, // if outside screen & illegal position, end game
                 States::End => break,
