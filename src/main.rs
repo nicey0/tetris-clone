@@ -1,6 +1,17 @@
 extern crate rand;
 use rand::seq::SliceRandom;
 
+extern crate glutin_window;
+use glutin_window::GlutinWindow as Window;
+extern crate opengl_graphics;
+use opengl_graphics::{GlGraphics, OpenGL};
+extern crate piston;
+use piston::event_loop::{EventSettings, Events, EventLoop};
+use piston::input::{RenderArgs, RenderEvent, UpdateEvent};
+use piston::window::WindowSettings;
+extern crate graphics;
+use graphics::*;
+
 mod pieces;
 use pieces::*;
 
@@ -10,6 +21,9 @@ use std::collections::HashMap;
 const MAXX: i8 = 10;
 const MAXY: i8 = 26;
 const BOARDY: i8 = 22;
+
+const CELLSIZE: i16 = 25;
+const WINSIZE: [f64; 2] = [(MAXX as i16*CELLSIZE) as f64, (MAXY as i16*CELLSIZE) as f64];
 
 const PIECES: [fn(i8, i8, i8) -> Piece; 7] = [i, o, j, l, s, z, t];
 
@@ -56,10 +70,22 @@ fn main() {
     // Vector holding still pieces' colors (I know it's weird, deal with it)
     let mut colors: Vec<Color> = Vec::new();
     let mut p = random_piece();
+
+    // GUI setup
+    let opengl = OpenGL::V3_2;
+    let mut window: Window = WindowSettings::new("Tetris Clone", WINSIZE)
+        .graphics_api(opengl)
+        .exit_on_esc(true)
+        .resizable(false)
+        .decorated(true)
+        .build().unwrap();
+    let mut gl = GlGraphics::new(opengl);
+    let mut events = Events::new(EventSettings::new());
+
     loop {
         print!("\x1B[2J\x1B[1;1H"); // clear scr
         println!("{}", rate);
-        print_board(&p, &pieces);
+        //print_board(&p, &pieces);
         match stdin.read_line(&mut input) {
             Ok(_) => {
                 if      &input.trim()[..] == "h" { p.side(-1, &pieces); }
