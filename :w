@@ -47,11 +47,10 @@ fn check_clear(pieces: &mut Vec<Point>, colors: &mut Vec<Color>) {
         }
     }
     let mut higher: i8 = 0;
-    *pieces = pieces.iter().enumerate().filter_map(|(i, coor)| {
+    *pieces = pieces.iter_mut().filter_map(|coor| {
         higher = 0;
         for &y in cleared.iter() {
             if coor.1 == y {
-                colors.remove(i);
                 return None
             } else if coor.1 < y {
                 higher += 1;

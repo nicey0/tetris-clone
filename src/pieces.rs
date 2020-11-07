@@ -56,7 +56,7 @@ impl Piece {
             shape[i] = (self.shape[i].0, self.shape[i].1 + c);
             origin = (self.origin.0, self.origin.1 + c as f64);
             if shape[i].1 >= self.maxy  || pieces.contains(&shape[i]) {
-                return if shape[i].1 <= self.maxy - self.boardy - 2 {
+                return if shape[i].1 <= self.maxy - self.boardy {
                     States::End // return End if illegal position & outside screen
                 } else {
                     States::Stop // else return Stop
@@ -67,6 +67,15 @@ impl Piece {
         self.shape = shape;
         self.origin = origin;
         States::Nothing
+    }
+
+    pub fn put_down(&mut self, pieces: &Vec<Point>) {
+        loop {
+            match self.down(1, pieces) {
+                States::Nothing => {},
+                _ => { break },
+            }
+        }
     }
 
     pub fn rotate(&mut self, pieces: &Vec<Point>) {
@@ -106,14 +115,14 @@ impl Piece {
 // maxx, maxy, boardy
 
 pub fn i(maxx: i8, maxy: i8, boardy: i8) -> Piece {
-    Piece::new([1.0, 1.0, 0.0, 1.0],
+    Piece::new([0.0, 1.0, 1.0, 1.0],
                [(0, 0), (1, 0), (2, 0), (3, 0)],
                (1.5, 0.0),
                maxx, maxy, boardy)
 }
 
 pub fn o(maxx: i8, maxy: i8, boardy: i8) -> Piece {
-    Piece::new([0.0, 1.0, 1.0, 1.0],
+    Piece::new([1.0, 1.0, 0.0, 1.0],
                [(0, 0), (1, 0), (0, 1), (1, 1)],
                (0.5, 0.5),
                maxx, maxy, boardy)
