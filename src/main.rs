@@ -107,19 +107,6 @@ fn check_clear(pieces: &mut Vec<ColPoint>) {
 
 fn update(p: &mut Piece, next: &mut Piece, pieces: &mut Vec<ColPoint>, rate: &mut i8) -> bool {
     print!("\x1B[2J\x1B[1;1H");
-    for y in 0..4 {
-        for x in 0..4 {
-            print!(
-                "{}",
-                if next.get_shape().contains(&(x, y)) {
-                    "██"
-                } else {
-                    "  "
-                }
-            );
-        }
-        println!("");
-    }
     *rate += 1;
     if *rate == RATE {
         *rate = 0;
