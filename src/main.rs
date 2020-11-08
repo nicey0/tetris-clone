@@ -4,10 +4,11 @@ use opengl_graphics::{GlGraphics, OpenGL};
 use piston::event_loop::{EventSettings, Events};
 use piston::input::{RenderEvent, UpdateEvent};
 use piston::window::WindowSettings;
-use piston::{Button, Key, PressEvent};
+use piston::{Button, PressEvent};
 
 mod colpoint;
 mod conf;
+mod key;
 mod piece_defs;
 mod pieces;
 mod render;
@@ -16,6 +17,7 @@ mod update;
 mod util;
 use colpoint::ColPoint;
 use conf::*;
+use key::*;
 use pieces::Piece;
 use render::*;
 use shadow::Shadow;
@@ -67,23 +69,8 @@ fn main() {
                 draw_pieces(&c, g, &p, &shadow, &pieces);
             });
         } else if let Some(button) = e.press_args() {
-            match button {
-                Button::Keyboard(key) => {
-                    handle_key(key, &mut p, &pieces);
-                }
-                _ => {}
-            }
+            handle_button(button, &mut p, &pieces);
         }
-    }
-}
-
-fn handle_key(key: Key, p: &mut Piece, pieces: &Vec<ColPoint>) {
-    match key {
-        Key::Right => p.side(1, &pieces),
-        Key::Left => p.side(-1, &pieces),
-        Key::Up => p.rotate(&pieces),
-        Key::Down => p.put_down(&pieces),
-        _ => {}
     }
 }
 

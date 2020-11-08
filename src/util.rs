@@ -20,5 +20,6 @@ pub type FPoint = (f64, f64);
 pub enum States {
     Stop,
     End,
+    Pause,
     Nothing,
 }
