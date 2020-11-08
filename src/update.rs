@@ -20,32 +20,39 @@ pub fn update(
     *rate += 1;
     if *rate == RATE {
         *rate = 0;
-        match p.down(1, &pieces) {
-            // gravity
-            States::Stop => {
-                // if illegal position, stop moving and instantiate new piece
-                for &s in p.get_shape().iter() {
-                    pieces.push(ColPoint {
-                        point: s,
-                        color: p.get_color(),
-                    });
-                }
-                *score += match check_clear(pieces) {
-                    0 => 0,
-                    1 => 120,
-                    2 => 200,
-                    3 => 600,
-                    _ => 2400,
-                };
-                *p = Piece::new_from_next(next);
-                *next = random_piece();
-            } // if outside screen & illegal position, end game
-            States::End => return false,
-            _ => {}
-        };
+        if !move_down(p, next, pieces, score) {
+            return false;
+        }
     }
     *shadow = Shadow::new(p);
     shadow.put_down(pieces);
+    true
+}
+
+fn move_down(p: &mut Piece, next: &mut Piece, pieces: &mut Vec<ColPoint>, score: &mut u32) -> bool {
+    match p.down(1, pieces) {
+        // gravity
+        States::Stop => {
+            // if illegal position, stop moving and instantiate new piece
+            for &s in p.get_shape().iter() {
+                pieces.push(ColPoint {
+                    point: s,
+                    color: p.get_color(),
+                });
+            }
+            *score += match check_clear(pieces) {
+                0 => 0,
+                1 => 120,
+                2 => 200,
+                3 => 600,
+                _ => 2400,
+            };
+            *p = Piece::new_from_next(next);
+            *next = random_piece();
+        } // if outside screen & illegal position, end game
+        States::End => return false,
+        _ => {}
+    };
     true
 }
 
