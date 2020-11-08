@@ -1,5 +1,4 @@
 use super::colpoint::ColPoint;
-use super::conf::*;
 use super::pieces::*;
 use super::util::*;
 
