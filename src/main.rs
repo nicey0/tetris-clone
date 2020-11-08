@@ -19,45 +19,40 @@ use pieces::*;
 use std::{io, thread, time};
 use std::collections::HashMap;
 
-const MAXX: i8 = 10;
-const MAXY: i8 = 24;
-const BOARDY: i8 = 22;
-
 const CELLSIZE: f64 = 20.0;
 const WINSIZE: [f64; 2] = [MAXX as f64 * CELLSIZE, BOARDY as f64 * CELLSIZE];
 const TOP_PAD: f64 = (MAXY - BOARDY) as f64 * CELLSIZE;
 
-const PIECES: [fn(i8, i8, i8) -> Piece; 7] = [i, o, j, l, s, z, t];
+const PIECES: [fn() -> Piece; 7] = [i, o, j, l, s, z, t];
 
 const RATE: i8 = 25; // lower rate = faster drop
 
 fn random_piece() -> Piece {
-    PIECES.choose(&mut rand::thread_rng()).unwrap()(MAXX, MAXY, BOARDY)
+    PIECES.choose(&mut rand::thread_rng()).unwrap()()
 }
 
-fn check_clear(pieces: &mut Vec<Point>, colors: &mut Vec<Color>) {
+fn check_clear(pieces: &mut Vec<ColPoint>) {
     // Vector of cleared y's
     let mut cleared: Vec<i8> = Vec::with_capacity(BOARDY as usize);
     // HashMap holding {y: width}
     let mut widths: HashMap<i8, i8> = HashMap::new();
     for i in 0..pieces.len() {
-        *widths.entry(pieces[i].1).or_insert(0) += 1;
-        if widths[&pieces[i].1] >= MAXX { // if line is cleared, add y to cleared
-            cleared.push(pieces[i].1);
+        *widths.entry(pieces[i].point.1).or_insert(0) += 1;
+        if widths[&pieces[i].point.1] >= MAXX { // if line is cleared, add y to cleared
+            cleared.push(pieces[i].point.1);
         }
     }
     let mut higher: i8 = 0;
-    *pieces = pieces.iter().enumerate().filter_map(|(i, coor)| {
+    *pieces = pieces.iter().filter_map(|coor| {
         higher = 0;
         for &y in cleared.iter() {
-            if coor.1 == y {
-                colors.remove(i);
+            if coor.point.1 == y {
                 return None
-            } else if coor.1 < y {
+            } else if coor.point.1 < y {
                 higher += 1;
             }
         }
-        Some((coor.0, coor.1 + higher))
+        Some(ColPoint{ point: (coor.point.0, coor.point.1 + higher), color: coor.color })
     }).collect();
 }
 
@@ -65,9 +60,7 @@ fn main() {
     // grav rate
     let mut rate = 0;
     // Vector holding still pieces
-    let mut pieces: Vec<Point> = Vec::new();
-    // Vector holding still pieces' colors (I know it's weird, deal with it)
-    let mut colors: Vec<Color> = Vec::new();
+    let mut pieces: Vec<ColPoint> = Vec::new();
     let mut p = random_piece();
 
     // GUI setup
@@ -84,6 +77,7 @@ fn main() {
     // Main loop
     while let Some(e) = events.next(&mut window) {
         if let Some(_) = e.update_args() {
+            print!("\x1B[2J\x1B[1;1H");
             // UPDATE
             rate += 1;
             if rate == RATE {
@@ -91,10 +85,9 @@ fn main() {
                 match p.down(1, &pieces) { // gravity
                     States::Stop => { // if illegal position, stop moving and instantiate new piece
                         for &s in p.get_shape().iter() {
-                            pieces.push(s);
-                            colors.push(*p.get_color());
+                            pieces.push(ColPoint { point: s, color: p.get_color() });
                         }
-                        check_clear(&mut pieces, &mut colors);
+                        check_clear(&mut pieces);
                         p = random_piece();
                     }, // if outside screen & illegal position, end game
                     States::End => break,
@@ -111,7 +104,7 @@ fn main() {
                         if s.contains(&(x, y)) {
                             // draw block
                             rectangle(
-                                *p.get_color(),
+                                p.get_color(),
                                 [
                                     x as f64 * CELLSIZE,
                                     y as f64 * CELLSIZE - TOP_PAD,
@@ -119,10 +112,10 @@ fn main() {
                                     CELLSIZE
                                 ], c.transform, g
                             );
-                        } else if pieces.contains(&(x, y)) {
+                        } else if pieces.contains(&ColPoint{ point: (x, y), color: [0.0; 4] }) {
                             // draw block
                             rectangle(
-                                [1.0, 0.0, 1.0, 1.0],
+                                pieces[pieces.iter().position(|e| e == &(x, y)).unwrap()].color,
                                 [
                                     x as f64 * CELLSIZE,
                                     y as f64 * CELLSIZE - TOP_PAD,
@@ -151,19 +144,19 @@ fn main() {
     }
 }
 
-fn print_board(p: &Piece, pieces: &Vec<Point>) {
-    let s =  p.get_shape();
-    println!("{:?}", s);
-    for y in MAXY-BOARDY..MAXY {
-        for x in 0..MAXX {
-            if s.contains(&(x, y)) {
-                print!("██");
-            } else if pieces.contains(&(x, y)) {
-                print!("▒▒");
-            } else {
-                print!("..");
-            }
-        }
-        println!("");
-    }
-}
+//fn print_board(p: &Piece, pieces: &Vec<ColPoint>) {
+    //let s =  p.get_shape();
+    //println!("{:?}", s);
+    //for y in MAXY-BOARDY..MAXY {
+        //for x in 0..MAXX {
+            //if s.contains(&(x, y)) {
+                //print!("██");
+            //} else if pieces.contains(&(x, y)) {
+                //print!("▒▒");
+            //} else {
+                //print!("..");
+            //}
+        //}
+        //println!("");
+    //}
+//}

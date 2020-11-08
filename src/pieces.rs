@@ -1,5 +1,9 @@
 use std::f64::consts::PI;
 
+pub const MAXX: i8 = 10;
+pub const MAXY: i8 = 24;
+pub const BOARDY: i8 = 22;
+
 pub type Color = [f32; 4];
 pub type Point = (i8, i8);
 pub type FPoint = (f64, f64);
@@ -15,31 +19,25 @@ pub struct Piece {
     color: Color,
     shape: [Point; 4],
     origin: FPoint,
-    maxx: i8,
-    maxy: i8,
-    boardy: i8,
 }
 
 impl Piece {
-    pub fn new(color: Color, shape: [Point; 4], origin: FPoint, maxx: i8, maxy: i8, boardy: i8) -> Self {
+    pub fn new(color: Color, shape: [Point; 4], origin: FPoint) -> Self {
         Self {
             color,
             shape,
             origin,
-            maxx,
-            maxy,
-            boardy,
         }
     }
 
-    pub fn side(&mut self, c: i8, pieces: &Vec<Point>) {
+    pub fn side(&mut self, c: i8, pieces: &Vec<ColPoint>) {
         // move in x axis
         let mut shape: [Point; 4] = [(0, 0); 4]; // shape after movement
         let mut origin: FPoint = self.origin; // origin after movement
         for i in 0..self.shape.len() {
             shape[i] = (self.shape[i].0 + c, self.shape[i].1);
             origin = (self.origin.0 + c as f64, self.origin.1);
-            if shape[i].0 < 0 || shape[i].0 >= self.maxx || pieces.contains(&shape[i]) {
+            if shape[i].0 < 0 || shape[i].0 >= MAXX || pieces.contains(&ColPoint{ point: shape[i], color: [0.0; 4] }) {
                 return // return if illegal position
             }
         }
@@ -48,15 +46,15 @@ impl Piece {
         self.origin = origin;
     }
 
-    pub fn down(&mut self, c: i8, pieces: &Vec<Point>) -> States {
+    pub fn down(&mut self, c: i8, pieces: &Vec<ColPoint>) -> States {
         // move in y axis
         let mut shape: [Point; 4] = [(0, 0); 4]; // shape after movement
         let mut origin: FPoint = self.origin; // origin after movement
         for i in 0..self.shape.len() {
             shape[i] = (self.shape[i].0, self.shape[i].1 + c);
             origin = (self.origin.0, self.origin.1 + c as f64);
-            if shape[i].1 >= self.maxy  || pieces.contains(&shape[i]) {
-                return if shape[i].1 <= self.maxy - self.boardy {
+            if shape[i].1 >= MAXY  || pieces.contains(&ColPoint{ point: shape[i], color: [0.0; 4] }) {
+                return if shape[i].1 <= MAXY - BOARDY {
                     States::End // return End if illegal position & outside screen
                 } else {
                     States::Stop // else return Stop
@@ -69,7 +67,7 @@ impl Piece {
         States::Nothing
     }
 
-    pub fn put_down(&mut self, pieces: &Vec<Point>) {
+    pub fn put_down(&mut self, pieces: &Vec<ColPoint>) {
         loop {
             match self.down(1, pieces) {
                 States::Nothing => {},
@@ -78,7 +76,7 @@ impl Piece {
         }
     }
 
-    pub fn rotate(&mut self, pieces: &Vec<Point>) {
+    pub fn rotate(&mut self, pieces: &Vec<ColPoint>) {
         let mut shape: [Point; 4] = [(0, 0); 4]; // shape after rotation
         for i in 0..self.shape.len() {
             // math
@@ -90,8 +88,8 @@ impl Piece {
             shape[i].0 = (rot_x * -1.0 + self.origin.0).round() as i8;
             shape[i].1 = (rot_y * -1.0 + self.origin.1).round() as i8;
             // return if illegal position
-            if shape[i].0 < 0 || shape[i].0 >= self.maxx || shape[i].1 < 0 || shape[i].1 >= self.maxy ||
-            pieces.contains(&shape[i]) {
+            if shape[i].0 < 0 || shape[i].0 >= MAXX || shape[i].1 < 0 || shape[i].1 >= MAXY ||
+            pieces.contains(&ColPoint { point: shape[i], color: [0.0; 4] }) {
                 return
             }
         }
@@ -103,8 +101,8 @@ impl Piece {
         &self.shape
     }
 
-    pub fn get_color(&self) -> &Color {
-        &self.color
+    pub fn get_color(&self) -> Color {
+        self.color
     }
 }
 
@@ -112,54 +110,62 @@ impl Piece {
 // [r, g, b, a]
 // [shape]
 // (origin x, origin y)
-// maxx, maxy, boardy
 
-pub fn i(maxx: i8, maxy: i8, boardy: i8) -> Piece {
+pub fn i() -> Piece {
     Piece::new([0.0, 1.0, 1.0, 1.0],
                [(0, 0), (1, 0), (2, 0), (3, 0)],
-               (1.5, 0.0),
-               maxx, maxy, boardy)
+               (1.5, 0.0))
 }
 
-pub fn o(maxx: i8, maxy: i8, boardy: i8) -> Piece {
+pub fn o() -> Piece {
     Piece::new([1.0, 1.0, 0.0, 1.0],
                [(0, 0), (1, 0), (0, 1), (1, 1)],
-               (0.5, 0.5),
-               maxx, maxy, boardy)
+               (0.5, 0.5))
 }
 
-pub fn j(maxx: i8, maxy: i8, boardy: i8) -> Piece {
+pub fn j() -> Piece {
     Piece::new([0.0, 0.0, 1.0, 1.0],
                [(1, 0), (1, 1), (1, 2), (0, 2)],
-               (1.0, 1.0),
-               maxx, maxy, boardy)
+               (1.0, 1.0))
 }
 
-pub fn l(maxx: i8, maxy: i8, boardy: i8) -> Piece {
+pub fn l() -> Piece {
     Piece::new([1.0, 0.5, 0.0, 1.0],
                [(0, 0), (0, 1), (0, 2), (1, 2)],
-               (0.0, 1.0),
-               maxx, maxy, boardy)
+               (0.0, 1.0))
 }
 
-pub fn s(maxx: i8, maxy: i8, boardy: i8) -> Piece {
+pub fn s() -> Piece {
     Piece::new([0.0, 1.0, 0.0, 1.0],
                [(1, 0), (2, 0), (0, 1), (1, 1)],
-               (1.0, 1.0),
-               maxx, maxy, boardy)
+               (1.0, 1.0))
 }
 
-pub fn z(maxx: i8, maxy: i8, boardy: i8) -> Piece {
+pub fn z() -> Piece {
     Piece::new([1.0, 0.0, 0.0, 1.0],
                [(1, 1), (2, 1), (0, 0), (1, 0)],
-               (1.0, 1.0),
-               maxx, maxy, boardy)
+               (1.0, 1.0))
 }
 
-pub fn t(maxx: i8, maxy: i8, boardy: i8) -> Piece {
+pub fn t() -> Piece {
     Piece::new([0.5, 0.0, 0.8, 1.0],
                [(1, 0), (0, 1), (1, 1), (2, 1)],
-               (1.0, 1.0),
-               maxx, maxy, boardy)
+               (1.0, 1.0))
 }
 
+pub struct ColPoint {
+    pub point: Point,
+    pub color: Color,
+}
+
+impl std::cmp::PartialEq<Point> for ColPoint {
+    fn eq(&self, other: &Point) -> bool {
+        self.point == *other
+    }
+}
+
+impl std::cmp::PartialEq for ColPoint {
+    fn eq(&self, other: &Self) -> bool {
+        self.point == other.point
+    }
+}
