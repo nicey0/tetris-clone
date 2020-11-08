@@ -91,7 +91,7 @@ pub fn draw_pieces(
                 );
             } else if shadow.shape.contains(&(x, y)) {
                 rectangle(
-                    SHADOWCOLOR,
+                    SHDOW,
                     [
                         x as f64 * CELLSIZE,
                         y as f64 * CELLSIZE - TOP_PAD,
