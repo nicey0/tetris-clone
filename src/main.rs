@@ -6,7 +6,7 @@ use glutin_window::GlutinWindow as Window;
 extern crate opengl_graphics;
 use opengl_graphics::{GlGraphics, OpenGL};
 extern crate piston;
-use piston::event_loop::{EventLoop, EventSettings, Events};
+use piston::event_loop::{EventSettings, Events};
 use piston::input::{RenderArgs, RenderEvent, UpdateEvent};
 use piston::window::WindowSettings;
 use piston::{Button, Key, PressEvent};
@@ -17,7 +17,6 @@ mod pieces;
 use pieces::*;
 
 use std::collections::HashMap;
-use std::{io, thread, time};
 
 const CELLSIZE: f64 = 20.0;
 const WINSIZE: [f64; 2] = [MAXX as f64 * CELLSIZE, BOARDY as f64 * CELLSIZE];
