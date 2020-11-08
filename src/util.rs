@@ -7,6 +7,7 @@ pub const MAXY: i8 = BOARDY + 2;
 pub const WELLWIDTH: f64 = MAXX as f64 * CELLSIZE;
 pub const RWIDTH: f64 = CELLSIZE * 7.0;
 pub const NWIDTH: f64 = RWIDTH - CELLSIZE * 2.0;
+pub const NHEIGHT: f64 = CELLSIZE * 4.0;
 pub const WINSIZE: (f64, f64) = (WELLWIDTH + RWIDTH, BOARDY as f64 * CELLSIZE);
 pub const TOP_PAD: f64 = (MAXY - BOARDY) as f64 * CELLSIZE;
 

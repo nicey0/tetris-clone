@@ -153,7 +153,7 @@ fn render(
         // draw next piece background bit
         rectangle(
             [0.3, 0.3, 0.3, 1.0],
-            [WELLWIDTH + CELLSIZE, CELLSIZE, NWIDTH, CELLSIZE * 4.0],
+            [WELLWIDTH + CELLSIZE, CELLSIZE, NWIDTH, NHEIGHT],
             c.transform,
             g,
         );
@@ -166,7 +166,8 @@ fn render(
                         [
                             WELLWIDTH + CELLSIZE + x as f64 * CELLSIZE + NWIDTH / 2.0
                                 - (next.get_width() as f64 / 2.0 * CELLSIZE),
-                            CELLSIZE + CELLSIZE + y as f64 * CELLSIZE,
+                            CELLSIZE + y as f64 * CELLSIZE + NHEIGHT / 2.0
+                                - ((5 - next.get_width()) as f64 / 2.0 * CELLSIZE),
                             CELLSIZE,
                             CELLSIZE,
                         ],
