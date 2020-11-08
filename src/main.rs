@@ -13,18 +13,23 @@ use piston::{Button, Key, PressEvent};
 extern crate graphics;
 use graphics::*;
 
+mod colpoint;
+mod conf;
+mod piece_defs;
 mod pieces;
-use pieces::*;
+mod shadow;
+use colpoint::ColPoint;
+use conf::*;
+use piece_defs::*;
+use pieces::Piece;
+use shadow::Shadow;
 
 use std::collections::HashMap;
 
-const CELLSIZE: f64 = 20.0;
 const WINSIZE: [f64; 2] = [MAXX as f64 * CELLSIZE, BOARDY as f64 * CELLSIZE];
 const TOP_PAD: f64 = (MAXY - BOARDY) as f64 * CELLSIZE;
 
 const PIECES: [fn() -> Piece; 7] = [i, o, j, l, s, z, t];
-
-const RATE: i8 = 25; // lower rate = faster drop
 
 fn random_piece() -> Piece {
     PIECES.choose(&mut rand::thread_rng()).unwrap()()
