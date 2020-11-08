@@ -68,6 +68,7 @@ impl Piece {
     }
 
     pub fn put_down(&mut self, pieces: &Vec<ColPoint>) {
+        // keep moving down until collision
         loop {
             match self.down(1, pieces) {
                 States::Nothing => {}
