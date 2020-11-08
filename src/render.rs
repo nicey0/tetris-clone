@@ -46,6 +46,10 @@ pub fn draw_next(c: &Context, g: &mut GlGraphics, next: &Piece) {
     }
 }
 
+pub fn draw_score(c: &Context, g: &mut GlGraphics, score: &u32) {
+    println!("{}", score);
+}
+
 pub fn draw_pieces(
     c: &Context,
     g: &mut GlGraphics,
