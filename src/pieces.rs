@@ -1,5 +1,6 @@
 use super::colpoint::ColPoint;
 use super::conf::*;
+use super::util::*;
 use std::f64::consts::PI;
 
 #[derive(Clone, Copy, Debug)]

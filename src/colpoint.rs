@@ -1,4 +1,4 @@
-use super::conf::*;
+use super::util::*;
 
 pub struct ColPoint {
     pub point: Point,

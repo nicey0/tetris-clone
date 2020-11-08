@@ -1,6 +1,7 @@
 use super::colpoint::ColPoint;
 use super::conf::*;
 use super::pieces::*;
+use super::util::*;
 
 pub struct Shadow {
     pub shape: [Point; 4],

@@ -18,11 +18,13 @@ mod conf;
 mod piece_defs;
 mod pieces;
 mod shadow;
+mod util;
 use colpoint::ColPoint;
 use conf::*;
 use piece_defs::*;
 use pieces::Piece;
 use shadow::Shadow;
+use util::*;
 
 use std::collections::HashMap;
 
