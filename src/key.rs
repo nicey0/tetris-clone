@@ -1,7 +1,7 @@
 use super::colpoint::ColPoint;
 use super::pieces::Piece;
 use super::util::*;
-use piston::{Button, Key};
+use piston_window::{Button, Key};
 
 pub fn handle_button(button: Button, p: &mut Piece, pieces: &Vec<ColPoint>) {
     match button {

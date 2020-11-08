@@ -1,7 +1,4 @@
-use graphics::glyph_cache::rusttype::GlyphCache;
-use graphics::*;
-use opengl_graphics::{GlGraphics, TextureSettings};
-use rusttype::Font;
+use piston_window::*;
 
 use super::colpoint::ColPoint;
 use super::conf::*;
@@ -9,7 +6,7 @@ use super::pieces::Piece;
 use super::shadow::Shadow;
 use super::util::*;
 
-pub fn draw_well(c: &Context, g: &mut GlGraphics) {
+pub fn draw_well(c: &Context, g: &mut G2d) {
     rectangle(
         [0.0, 0.0, 0.0, 1.0],
         [0.0, 0.0, WELLWIDTH, WINSIZE.1],
@@ -18,7 +15,7 @@ pub fn draw_well(c: &Context, g: &mut GlGraphics) {
     );
 }
 
-pub fn draw_next(c: &Context, g: &mut GlGraphics, next: &Piece) {
+pub fn draw_next(c: &Context, g: &mut G2d, next: &Piece) {
     // draw next piece background bit
     rectangle(
         [0.3, 0.3, 0.3, 1.0],
@@ -48,18 +45,12 @@ pub fn draw_next(c: &Context, g: &mut GlGraphics, next: &Piece) {
     }
 }
 
-pub fn draw_score(c: &Context, g: &mut GlGraphics, score: &u32, factory: u8) {
+pub fn draw_score(c: &Context, g: &mut G2d, score: &u32) {
     println!("{}", score);
-    let font_data: &[u8] = include_bytes!("../fonts/FiraSans-Regular.ttf");
+    //let font_data: &[u8] = include_bytes!("../fonts/FiraSans-Regular.ttf");
 }
 
-pub fn draw_pieces(
-    c: &Context,
-    g: &mut GlGraphics,
-    p: &Piece,
-    shadow: &Shadow,
-    pieces: &Vec<ColPoint>,
-) {
+pub fn draw_pieces(c: &Context, g: &mut G2d, p: &Piece, shadow: &Shadow, pieces: &Vec<ColPoint>) {
     let s = p.get_shape();
     for y in MAXY - BOARDY..MAXY {
         for x in 0..MAXX {

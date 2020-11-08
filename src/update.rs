@@ -13,8 +13,8 @@ pub fn update(
     next: &mut Piece,
     score: &mut u32,
     pieces: &mut Vec<ColPoint>,
-    rate: &mut i8,
-    mrate: &mut i8,
+    rate: &mut u16,
+    mrate: &mut u16,
     cl: &mut u32,
 ) -> bool {
     print!("\x1B[2J\x1B[1;1H");
@@ -22,7 +22,7 @@ pub fn update(
     *rate += 1;
     if rate == mrate {
         *rate = 0;
-        if !move_down(p, next, pieces, score, rate, mrate, cl) {
+        if !move_down(p, next, pieces, score, mrate, cl) {
             return false;
         }
     }
@@ -36,8 +36,7 @@ fn move_down(
     next: &mut Piece,
     pieces: &mut Vec<ColPoint>,
     score: &mut u32,
-    rate: &mut i8,
-    mrate: &mut i8,
+    mrate: &mut u16,
     cl: &mut u32,
 ) -> bool {
     match p.down(1, pieces) {
@@ -71,6 +70,7 @@ fn move_down(
             };
             if *cl >= 5 {
                 if *mrate > 0 {
+                    *cl = 0;
                     *mrate -= 1;
                 }
             }

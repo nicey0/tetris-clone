@@ -1,10 +1,4 @@
-use glutin_window::GlutinWindow as Window;
-use graphics::*;
-use opengl_graphics::{GlGraphics, OpenGL};
-use piston::event_loop::{EventSettings, Events};
-use piston::input::{RenderEvent, UpdateEvent};
-use piston::window::WindowSettings;
-use piston::{Button, PressEvent};
+use piston_window::*;
 
 mod colpoint;
 mod conf;
@@ -38,18 +32,16 @@ fn main() {
 
     // GUI setup
     let opengl = OpenGL::V3_2;
-    let mut window: Window = WindowSettings::new("Tetris Clone", WINSIZE)
+    let mut window: PistonWindow = WindowSettings::new("Tetris Clone", WINSIZE)
         .graphics_api(opengl)
         .exit_on_esc(true)
         .resizable(false)
         .decorated(true)
         .build()
         .unwrap();
-    let mut gl = GlGraphics::new(opengl);
-    let mut events = Events::new(EventSettings::new());
 
     // Main loop
-    while let Some(e) = events.next(&mut window) {
+    while let Some(e) = window.next() {
         if let Some(_) = e.update_args() {
             // UPDATE
             if !update(
@@ -64,13 +56,13 @@ fn main() {
             ) {
                 break;
             }
-        } else if let Some(args) = e.render_args() {
+        } else if let Some(_) = e.render_args() {
             // RENDER
-            gl.draw(args.viewport(), |c, g| {
+            window.draw_2d(&e, |c, g, _d| {
                 clear([0.1, 0.1, 0.1, 1.0], g);
                 draw_well(&c, g);
                 draw_next(&c, g, &next);
-                draw_score(&c, g, &score, 0);
+                draw_score(&c, g, &score);
                 draw_pieces(&c, g, &p, &shadow, &pieces);
             });
         } else if let Some(button) = e.press_args() {
