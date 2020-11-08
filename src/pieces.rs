@@ -12,7 +12,7 @@ pub struct Piece {
 
 impl Piece {
     fn adjust(x: f64, o: f64) -> i8 {
-        (x + ((MAXX as f64 / 2.0) - o).round()) as i8
+        (x + ((MAXX as f64 / 2.0) - o).round()) as i8 - 1
     }
 
     pub fn new(color: Color, shape: [Point; 4], origin: FPoint) -> Self {
