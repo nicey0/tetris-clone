@@ -21,18 +21,11 @@ mod shadow;
 mod util;
 use colpoint::ColPoint;
 use conf::*;
-use piece_defs::*;
 use pieces::Piece;
 use shadow::Shadow;
 use util::*;
 
 use std::collections::HashMap;
-
-const WELLWIDTH: f64 = MAXX as f64 * CELLSIZE;
-const WINSIZE: (f64, f64) = (WELLWIDTH + 6.0 * CELLSIZE, BOARDY as f64 * CELLSIZE);
-const TOP_PAD: f64 = (MAXY - BOARDY) as f64 * CELLSIZE;
-
-const PIECES: [fn() -> Piece; 7] = [i, o, j, l, s, z, t];
 
 fn main() {
     // grav rate
@@ -64,7 +57,7 @@ fn main() {
             }
         } else if let Some(args) = e.render_args() {
             // RENDER
-            render(&mut gl, &args, &mut p, &mut shadow, &mut pieces);
+            render(&mut gl, &args, &mut p, &next, &mut shadow, &mut pieces);
         } else if let Some(button) = e.press_args() {
             match button {
                 Button::Keyboard(key) => {
@@ -155,6 +148,7 @@ fn render(
     gl: &mut GlGraphics,
     args: &RenderArgs,
     p: &mut Piece,
+    next: &Piece,
     shadow: &mut Shadow,
     pieces: &mut Vec<ColPoint>,
 ) {
@@ -162,13 +156,39 @@ fn render(
     shadow.put_down(pieces);
     gl.draw(args.viewport(), |c, g| {
         clear([0.1, 0.1, 0.1, 1.0], g);
-        // clear well bit
+        // draw well bit
         rectangle(
             [0.0, 0.0, 0.0, 1.0],
             [0.0, 0.0, WELLWIDTH, WINSIZE.1],
             c.transform,
             g,
         );
+        // draw next piece background bit
+        rectangle(
+            [0.3, 0.3, 0.3, 1.0],
+            [WELLWIDTH + CELLSIZE, CELLSIZE, NWIDTH, CELLSIZE * 4.0],
+            c.transform,
+            g,
+        );
+        // draw next piece
+        for y in 0..4 {
+            for x in 0..4 {
+                if next.get_shape().contains(&(x, y)) {
+                    rectangle(
+                        next.get_color(),
+                        [
+                            WELLWIDTH + CELLSIZE + x as f64 * CELLSIZE + NWIDTH / 2.0
+                                - (next.get_width() as f64 / 2.0 * CELLSIZE),
+                            CELLSIZE + CELLSIZE + y as f64 * CELLSIZE,
+                            CELLSIZE,
+                            CELLSIZE,
+                        ],
+                        c.transform,
+                        g,
+                    );
+                }
+            }
+        }
         let s = p.get_shape();
         for y in MAXY - BOARDY..MAXY {
             for x in 0..MAXX {

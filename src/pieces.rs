@@ -8,6 +8,7 @@ pub struct Piece {
     color: Color,
     shape: [Point; 4],
     origin: FPoint,
+    width: i8,
 }
 
 impl Piece {
@@ -15,11 +16,12 @@ impl Piece {
         (x + ((MAXX as f64 / 2.0) - o).round()) as i8 - 1
     }
 
-    pub fn new(color: Color, shape: [Point; 4], origin: FPoint) -> Self {
+    pub fn new(color: Color, shape: [Point; 4], origin: FPoint, width: i8) -> Self {
         Self {
             color,
             shape,
             origin,
+            width,
         }
     }
 
@@ -36,6 +38,7 @@ impl Piece {
                 Piece::adjust(next.origin.0, next.origin.0) as f64,
                 next.origin.1,
             ),
+            width: next.width,
         }
     }
 
@@ -138,5 +141,13 @@ impl Piece {
 
     pub fn get_color(&self) -> Color {
         self.color
+    }
+
+    pub fn get_origin(&self) -> FPoint {
+        self.origin
+    }
+
+    pub fn get_width(&self) -> i8 {
+        self.width
     }
 }
