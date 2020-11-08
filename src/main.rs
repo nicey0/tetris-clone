@@ -28,7 +28,8 @@ use util::*;
 
 use std::collections::HashMap;
 
-const WINSIZE: [f64; 2] = [MAXX as f64 * CELLSIZE, BOARDY as f64 * CELLSIZE];
+const WELLWIDTH: f64 = MAXX as f64 * CELLSIZE;
+const WINSIZE: (f64, f64) = (WELLWIDTH + 6.0 * CELLSIZE, BOARDY as f64 * CELLSIZE);
 const TOP_PAD: f64 = (MAXY - BOARDY) as f64 * CELLSIZE;
 
 const PIECES: [fn() -> Piece; 7] = [i, o, j, l, s, z, t];
@@ -113,7 +114,19 @@ fn check_clear(pieces: &mut Vec<ColPoint>) {
 
 fn update(p: &mut Piece, next: &mut Piece, pieces: &mut Vec<ColPoint>, rate: &mut i8) -> bool {
     print!("\x1B[2J\x1B[1;1H");
-    println!("{:?}", next);
+    for y in 0..4 {
+        for x in 0..4 {
+            print!(
+                "{}",
+                if next.get_shape().contains(&(x, y)) {
+                    "██"
+                } else {
+                    "  "
+                }
+            );
+        }
+        println!("");
+    }
     *rate += 1;
     if *rate == RATE {
         *rate = 0;
@@ -128,7 +141,7 @@ fn update(p: &mut Piece, next: &mut Piece, pieces: &mut Vec<ColPoint>, rate: &mu
                     });
                 }
                 check_clear(pieces);
-                *p = *next;
+                *p = Piece::new_from_next(next);
                 *next = random_piece();
             } // if outside screen & illegal position, end game
             States::End => return false,
@@ -148,7 +161,14 @@ fn render(
     *shadow = Shadow::new(p);
     shadow.put_down(pieces);
     gl.draw(args.viewport(), |c, g| {
-        clear([0.0, 0.0, 0.0, 1.0], g);
+        clear([0.1, 0.1, 0.1, 1.0], g);
+        // clear well bit
+        rectangle(
+            [0.0, 0.0, 0.0, 1.0],
+            [0.0, 0.0, WELLWIDTH, WINSIZE.1],
+            c.transform,
+            g,
+        );
         let s = p.get_shape();
         for y in MAXY - BOARDY..MAXY {
             for x in 0..MAXX {

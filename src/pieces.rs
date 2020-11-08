@@ -16,15 +16,26 @@ impl Piece {
     }
 
     pub fn new(color: Color, shape: [Point; 4], origin: FPoint) -> Self {
-        let mut adj: [Point; 4] = [(0, 0); 4];
-        shape
-            .iter()
-            .enumerate()
-            .for_each(|(i, &p)| adj[i] = (Piece::adjust(p.0 as f64, origin.0), p.1));
         Self {
             color,
+            shape,
+            origin,
+        }
+    }
+
+    pub fn new_from_next(next: &Self) -> Self {
+        let mut adj: [Point; 4] = [(0, 0); 4];
+        next.shape
+            .iter()
+            .enumerate()
+            .for_each(|(i, &p)| adj[i] = (Piece::adjust(p.0 as f64, next.origin.0), p.1));
+        Self {
+            color: next.color,
             shape: adj,
-            origin: (Piece::adjust(origin.0, origin.0) as f64, origin.1),
+            origin: (
+                Piece::adjust(next.origin.0, next.origin.0) as f64,
+                next.origin.1,
+            ),
         }
     }
 
