@@ -14,13 +14,15 @@ pub fn update(
     score: &mut u32,
     pieces: &mut Vec<ColPoint>,
     rate: &mut i8,
+    mrate: &mut i8,
+    cl: &mut u32,
 ) -> bool {
     print!("\x1B[2J\x1B[1;1H");
     println!("{}", score);
     *rate += 1;
-    if *rate == RATE {
+    if rate == mrate {
         *rate = 0;
-        if !move_down(p, next, pieces, score) {
+        if !move_down(p, next, pieces, score, cl) {
             return false;
         }
     }
@@ -29,7 +31,13 @@ pub fn update(
     true
 }
 
-fn move_down(p: &mut Piece, next: &mut Piece, pieces: &mut Vec<ColPoint>, score: &mut u32) -> bool {
+fn move_down(
+    p: &mut Piece,
+    next: &mut Piece,
+    pieces: &mut Vec<ColPoint>,
+    score: &mut u32,
+    cl: &mut u32,
+) -> bool {
     match p.down(1, pieces) {
         // gravity
         States::Stop => {
@@ -41,10 +49,22 @@ fn move_down(p: &mut Piece, next: &mut Piece, pieces: &mut Vec<ColPoint>, score:
                 });
             }
             *score += match check_clear(pieces) {
-                0 => 0,
-                1 => 120,
-                2 => 200,
-                3 => 600,
+                0 => {
+                    *cl += 1;
+                    0
+                }
+                1 => {
+                    *cl += 1;
+                    120
+                }
+                2 => {
+                    *cl += 1;
+                    200
+                }
+                3 => {
+                    *cl += 1;
+                    600
+                }
                 _ => 2400,
             };
             *p = Piece::new_from_next(next);

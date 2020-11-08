@@ -26,6 +26,8 @@ use util::*;
 
 fn main() {
     // grav rate
+    let mut mrate = INIRATE;
+    let mut cl = 0;
     let mut rate = 0;
     // Vector holding still pieces
     let mut pieces: Vec<ColPoint> = Vec::new();
@@ -57,6 +59,8 @@ fn main() {
                 &mut score,
                 &mut pieces,
                 &mut rate,
+                &mut mrate,
+                &mut cl,
             ) {
                 break;
             }
