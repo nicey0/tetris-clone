@@ -56,7 +56,69 @@ fn check_clear(pieces: &mut Vec<ColPoint>) {
     }).collect();
 }
 
-fn update(pieces: &mut Vec<ColPoint>
+fn update(p: &mut Piece, pieces: &mut Vec<ColPoint>, rate: &mut i8) -> bool {
+    print!("\x1B[2J\x1B[1;1H");
+    *rate += 1;
+    if *rate == RATE {
+        *rate = 0;
+        match p.down(1, &pieces) { // gravity
+            States::Stop => { // if illegal position, stop moving and instantiate new piece
+                for &s in p.get_shape().iter() {
+                    pieces.push(ColPoint { point: s, color: p.get_color() });
+                }
+                check_clear(pieces);
+                *p = random_piece();
+            }, // if outside screen & illegal position, end game
+            States::End => return false,
+            _ => {},
+        };
+    }
+    true
+}
+
+fn render(gl: &mut GlGraphics, args: &RenderArgs, p: &mut Piece, pieces: &mut Vec<ColPoint>) {
+    gl.draw(args.viewport(), |c, g| {
+        clear([0.0, 0.0, 0.0, 1.0], g);
+        let s = p.get_shape();
+        for y in MAXY-BOARDY..MAXY {
+            for x in 0..MAXX {
+                if s.contains(&(x, y)) {
+                    // draw block
+                    rectangle(
+                        p.get_color(),
+                        [
+                            x as f64 * CELLSIZE,
+                            y as f64 * CELLSIZE - TOP_PAD,
+                            CELLSIZE,
+                            CELLSIZE
+                        ], c.transform, g
+                    );
+                } else if pieces.contains(&ColPoint{ point: (x, y), color: [0.0; 4] }) {
+                    // draw block
+                    rectangle(
+                        pieces[pieces.iter().position(|e| e == &(x, y)).unwrap()].color,
+                        [
+                            x as f64 * CELLSIZE,
+                            y as f64 * CELLSIZE - TOP_PAD,
+                            CELLSIZE,
+                            CELLSIZE
+                        ], c.transform, g
+                    );
+                }
+            }
+        }
+    });
+}
+
+fn handle_key(key: Key, p: &mut Piece, pieces: &Vec<ColPoint>) {
+    match key {
+        Key::Right => { p.side(1, &pieces) },
+        Key::Left => { p.side(-1, &pieces) },
+        Key::Up => { p.rotate(&pieces) },
+        Key::Down => { p.put_down(&pieces) },
+        _ => {},
+    }
+}
 
 fn main() {
     // grav rate
@@ -79,66 +141,17 @@ fn main() {
     // Main loop
     while let Some(e) = events.next(&mut window) {
         if let Some(_) = e.update_args() {
-            print!("\x1B[2J\x1B[1;1H");
             // UPDATE
-            rate += 1;
-            if rate == RATE {
-                rate = 0;
-                match p.down(1, &pieces) { // gravity
-                    States::Stop => { // if illegal position, stop moving and instantiate new piece
-                        for &s in p.get_shape().iter() {
-                            pieces.push(ColPoint { point: s, color: p.get_color() });
-                        }
-                        check_clear(&mut pieces);
-                        p = random_piece();
-                    }, // if outside screen & illegal position, end game
-                    States::End => break,
-                    _ => {},
-                };
+            if !update(&mut p, &mut pieces, &mut rate) {
+                break
             }
         } else if let Some(args) = e.render_args() {
             // RENDER
-            gl.draw(args.viewport(), |c, g| {
-                clear([0.0, 0.0, 0.0, 1.0], g);
-                let s = p.get_shape();
-                for y in MAXY-BOARDY..MAXY {
-                    for x in 0..MAXX {
-                        if s.contains(&(x, y)) {
-                            // draw block
-                            rectangle(
-                                p.get_color(),
-                                [
-                                    x as f64 * CELLSIZE,
-                                    y as f64 * CELLSIZE - TOP_PAD,
-                                    CELLSIZE,
-                                    CELLSIZE
-                                ], c.transform, g
-                            );
-                        } else if pieces.contains(&ColPoint{ point: (x, y), color: [0.0; 4] }) {
-                            // draw block
-                            rectangle(
-                                pieces[pieces.iter().position(|e| e == &(x, y)).unwrap()].color,
-                                [
-                                    x as f64 * CELLSIZE,
-                                    y as f64 * CELLSIZE - TOP_PAD,
-                                    CELLSIZE,
-                                    CELLSIZE
-                                ], c.transform, g
-                            );
-                        }
-                    }
-                }
-            });
+            render(&mut gl, &args, &mut p, &mut pieces);
         } else if let Some(button) = e.press_args() {
             match button {
                 Button::Keyboard(key) => {
-                    match key {
-                    Key::Right => { p.side(1, &pieces) },
-                    Key::Left => { p.side(-1, &pieces) },
-                    Key::Up => { p.rotate(&pieces) },
-                    Key::Down => { p.put_down(&pieces) },
-                    _ => {},
-                    }
+                    handle_key(key, &mut p, &pieces);
                 },
                 _ => {},
             }
