@@ -5,7 +5,7 @@ pub const MAXX: i8 = 10;
 pub const BOARDY: i8 = 20;
 pub const CELLSIZE: f64 = 20.0;
 // gravity
-pub const RATE: i8 = 25; // lower rate = faster drop
+pub const RATE: i8 = 35; // lower rate = faster drop
 
 // piece colors
 pub const COL_I: Color = [0.0, 1.0, 1.0, 1.0];

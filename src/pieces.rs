@@ -8,6 +8,7 @@ pub struct Piece {
     color: Color,
     shape: [Point; 4],
     origin: FPoint,
+    rotates: bool,
     width: i8,
     height: i8,
 }
@@ -17,11 +18,19 @@ impl Piece {
         (x + ((MAXX as f64 / 2.0) - o).round()) as i8 - 1
     }
 
-    pub fn new(color: Color, shape: [Point; 4], origin: FPoint, width: i8, height: i8) -> Self {
+    pub fn new(
+        color: Color,
+        shape: [Point; 4],
+        origin: FPoint,
+        rotates: bool,
+        width: i8,
+        height: i8,
+    ) -> Self {
         Self {
             color,
             shape,
             origin,
+            rotates,
             width,
             height,
         }
@@ -42,6 +51,7 @@ impl Piece {
             ),
             width: next.width,
             height: next.height,
+            rotates: next.rotates,
         }
     }
 
@@ -111,6 +121,9 @@ impl Piece {
     }
 
     pub fn rotate(&mut self, pieces: &Vec<ColPoint>) {
+        if !self.rotates {
+            return;
+        }
         let mut shape: [Point; 4] = [(0, 0); 4]; // shape after rotation
         for i in 0..self.shape.len() {
             // math
