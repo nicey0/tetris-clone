@@ -7,21 +7,21 @@ extern crate opengl_graphics;
 use opengl_graphics::{GlGraphics, OpenGL};
 extern crate piston;
 use piston::event_loop::{EventSettings, Events};
-use piston::input::{RenderArgs, RenderEvent, UpdateEvent};
+use piston::input::{RenderEvent, UpdateEvent};
 use piston::window::WindowSettings;
 use piston::{Button, Key, PressEvent};
-extern crate graphics;
-use graphics::*;
 
 mod colpoint;
 mod conf;
 mod piece_defs;
 mod pieces;
+mod render;
 mod shadow;
 mod util;
 use colpoint::ColPoint;
 use conf::*;
 use pieces::Piece;
+use render::*;
 use shadow::Shadow;
 use util::*;
 
@@ -35,6 +35,7 @@ fn main() {
     let mut p = random_piece();
     let mut shadow = Shadow::new(&p);
     let mut next = random_piece();
+    let mut score: u32 = 0;
 
     // GUI setup
     let opengl = OpenGL::V3_2;
@@ -52,7 +53,7 @@ fn main() {
     while let Some(e) = events.next(&mut window) {
         if let Some(_) = e.update_args() {
             // UPDATE
-            if !update(&mut p, &mut next, &mut pieces, &mut rate) {
+            if !update(&mut p, &mut next, &mut score, &mut pieces, &mut rate) {
                 break;
             }
         } else if let Some(args) = e.render_args() {
@@ -73,7 +74,7 @@ fn random_piece() -> Piece {
     PIECES.choose(&mut rand::thread_rng()).unwrap()()
 }
 
-fn check_clear(pieces: &mut Vec<ColPoint>) {
+fn check_clear(pieces: &mut Vec<ColPoint>) -> usize {
     // Vector of cleared y's
     let mut cleared: Vec<i8> = Vec::with_capacity(BOARDY as usize);
     // HashMap holding {y: width}
@@ -103,10 +104,18 @@ fn check_clear(pieces: &mut Vec<ColPoint>) {
             })
         })
         .collect();
+    cleared.len()
 }
 
-fn update(p: &mut Piece, next: &mut Piece, pieces: &mut Vec<ColPoint>, rate: &mut i8) -> bool {
+fn update(
+    p: &mut Piece,
+    next: &mut Piece,
+    score: &mut u32,
+    pieces: &mut Vec<ColPoint>,
+    rate: &mut i8,
+) -> bool {
     print!("\x1B[2J\x1B[1;1H");
+    println!("{}", score);
     *rate += 1;
     if *rate == RATE {
         *rate = 0;
@@ -120,7 +129,13 @@ fn update(p: &mut Piece, next: &mut Piece, pieces: &mut Vec<ColPoint>, rate: &mu
                         color: p.get_color(),
                     });
                 }
-                check_clear(pieces);
+                *score += match check_clear(pieces) {
+                    0 => 0,
+                    1 => 120,
+                    2 => 200,
+                    3 => 600,
+                    _ => 2400,
+                };
                 *p = Piece::new_from_next(next);
                 *next = random_piece();
             } // if outside screen & illegal position, end game
@@ -129,102 +144,6 @@ fn update(p: &mut Piece, next: &mut Piece, pieces: &mut Vec<ColPoint>, rate: &mu
         };
     }
     true
-}
-
-fn render(
-    gl: &mut GlGraphics,
-    args: &RenderArgs,
-    p: &mut Piece,
-    next: &Piece,
-    shadow: &mut Shadow,
-    pieces: &mut Vec<ColPoint>,
-) {
-    *shadow = Shadow::new(p);
-    shadow.put_down(pieces);
-    gl.draw(args.viewport(), |c, g| {
-        clear([0.1, 0.1, 0.1, 1.0], g);
-        // draw well bit
-        rectangle(
-            [0.0, 0.0, 0.0, 1.0],
-            [0.0, 0.0, WELLWIDTH, WINSIZE.1],
-            c.transform,
-            g,
-        );
-        // draw next piece background bit
-        rectangle(
-            [0.3, 0.3, 0.3, 1.0],
-            [WELLWIDTH + CELLSIZE, CELLSIZE, NWIDTH, NHEIGHT],
-            c.transform,
-            g,
-        );
-        // draw next piece
-        for y in 0..4 {
-            for x in 0..4 {
-                if next.get_shape().contains(&(x, y)) {
-                    rectangle(
-                        next.get_color(),
-                        [
-                            WELLWIDTH + CELLSIZE + x as f64 * CELLSIZE + NWIDTH / 2.0
-                                - (next.get_width() as f64 / 2.0 * CELLSIZE),
-                            CELLSIZE + y as f64 * CELLSIZE + NHEIGHT / 2.0
-                                - ((5 - next.get_width()) as f64 / 2.0 * CELLSIZE),
-                            CELLSIZE,
-                            CELLSIZE,
-                        ],
-                        c.transform,
-                        g,
-                    );
-                }
-            }
-        }
-        let s = p.get_shape();
-        for y in MAXY - BOARDY..MAXY {
-            for x in 0..MAXX {
-                if s.contains(&(x, y)) {
-                    // draw block
-                    rectangle(
-                        p.get_color(),
-                        [
-                            x as f64 * CELLSIZE,
-                            y as f64 * CELLSIZE - TOP_PAD,
-                            CELLSIZE,
-                            CELLSIZE,
-                        ],
-                        c.transform,
-                        g,
-                    );
-                } else if pieces.contains(&ColPoint {
-                    point: (x, y),
-                    color: [0.0; 4],
-                }) {
-                    // draw block
-                    rectangle(
-                        pieces[pieces.iter().position(|e| e == &(x, y)).unwrap()].color,
-                        [
-                            x as f64 * CELLSIZE,
-                            y as f64 * CELLSIZE - TOP_PAD,
-                            CELLSIZE,
-                            CELLSIZE,
-                        ],
-                        c.transform,
-                        g,
-                    );
-                } else if shadow.shape.contains(&(x, y)) {
-                    rectangle(
-                        SHADOWCOLOR,
-                        [
-                            x as f64 * CELLSIZE,
-                            y as f64 * CELLSIZE - TOP_PAD,
-                            CELLSIZE,
-                            CELLSIZE,
-                        ],
-                        c.transform,
-                        g,
-                    );
-                }
-            }
-        }
-    });
 }
 
 fn handle_key(key: Key, p: &mut Piece, pieces: &Vec<ColPoint>) {
