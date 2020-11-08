@@ -56,6 +56,8 @@ fn check_clear(pieces: &mut Vec<ColPoint>) {
     }).collect();
 }
 
+fn update(pieces: &mut Vec<ColPoint>
+
 fn main() {
     // grav rate
     let mut rate = 0;
