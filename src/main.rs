@@ -70,6 +70,7 @@ fn main() {
                 clear([0.1, 0.1, 0.1, 1.0], g);
                 draw_well(&c, g);
                 draw_next(&c, g, &next);
+                draw_score(&c, g, &score, 0);
                 draw_pieces(&c, g, &p, &shadow, &pieces);
             });
         } else if let Some(button) = e.press_args() {

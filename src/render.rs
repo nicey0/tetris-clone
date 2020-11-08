@@ -1,5 +1,7 @@
+use graphics::glyph_cache::rusttype::GlyphCache;
 use graphics::*;
-use opengl_graphics::GlGraphics;
+use opengl_graphics::{GlGraphics, TextureSettings};
+use rusttype::Font;
 
 use super::colpoint::ColPoint;
 use super::conf::*;
@@ -46,8 +48,9 @@ pub fn draw_next(c: &Context, g: &mut GlGraphics, next: &Piece) {
     }
 }
 
-pub fn draw_score(c: &Context, g: &mut GlGraphics, score: &u32) {
+pub fn draw_score(c: &Context, g: &mut GlGraphics, score: &u32, factory: u8) {
     println!("{}", score);
+    let font_data: &[u8] = include_bytes!("../fonts/FiraSans-Regular.ttf");
 }
 
 pub fn draw_pieces(
