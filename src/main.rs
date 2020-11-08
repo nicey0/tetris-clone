@@ -1,11 +1,8 @@
-extern crate rand;
 use rand::seq::SliceRandom;
 
-extern crate glutin_window;
 use glutin_window::GlutinWindow as Window;
-extern crate opengl_graphics;
+use graphics::*;
 use opengl_graphics::{GlGraphics, OpenGL};
-extern crate piston;
 use piston::event_loop::{EventSettings, Events};
 use piston::input::{RenderEvent, UpdateEvent};
 use piston::window::WindowSettings;
@@ -53,12 +50,24 @@ fn main() {
     while let Some(e) = events.next(&mut window) {
         if let Some(_) = e.update_args() {
             // UPDATE
-            if !update(&mut p, &mut next, &mut score, &mut pieces, &mut rate) {
+            if !update(
+                &mut p,
+                &mut shadow,
+                &mut next,
+                &mut score,
+                &mut pieces,
+                &mut rate,
+            ) {
                 break;
             }
         } else if let Some(args) = e.render_args() {
             // RENDER
-            render(&mut gl, &args, &mut p, &next, &mut shadow, &mut pieces);
+            gl.draw(args.viewport(), |c, g| {
+                clear([0.1, 0.1, 0.1, 1.0], g);
+                draw_well(&c, g);
+                draw_next(&c, g, &next);
+                draw_pieces(&c, g, &p, &shadow, &pieces);
+            });
         } else if let Some(button) = e.press_args() {
             match button {
                 Button::Keyboard(key) => {
@@ -109,6 +118,7 @@ fn check_clear(pieces: &mut Vec<ColPoint>) -> usize {
 
 fn update(
     p: &mut Piece,
+    shadow: &mut Shadow,
     next: &mut Piece,
     score: &mut u32,
     pieces: &mut Vec<ColPoint>,
@@ -143,6 +153,8 @@ fn update(
             _ => {}
         };
     }
+    *shadow = Shadow::new(p);
+    shadow.put_down(pieces);
     true
 }
 
