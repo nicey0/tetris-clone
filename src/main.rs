@@ -33,6 +33,48 @@ const TOP_PAD: f64 = (MAXY - BOARDY) as f64 * CELLSIZE;
 
 const PIECES: [fn() -> Piece; 7] = [i, o, j, l, s, z, t];
 
+fn main() {
+    // grav rate
+    let mut rate = 0;
+    // Vector holding still pieces
+    let mut pieces: Vec<ColPoint> = Vec::new();
+    let mut p = random_piece();
+    let mut shadow = Shadow::new(&p);
+    let mut next = random_piece();
+
+    // GUI setup
+    let opengl = OpenGL::V3_2;
+    let mut window: Window = WindowSettings::new("Tetris Clone", WINSIZE)
+        .graphics_api(opengl)
+        .exit_on_esc(true)
+        .resizable(false)
+        .decorated(true)
+        .build()
+        .unwrap();
+    let mut gl = GlGraphics::new(opengl);
+    let mut events = Events::new(EventSettings::new());
+
+    // Main loop
+    while let Some(e) = events.next(&mut window) {
+        if let Some(_) = e.update_args() {
+            // UPDATE
+            if !update(&mut p, &mut next, &mut pieces, &mut rate) {
+                break;
+            }
+        } else if let Some(args) = e.render_args() {
+            // RENDER
+            render(&mut gl, &args, &mut p, &mut shadow, &mut pieces);
+        } else if let Some(button) = e.press_args() {
+            match button {
+                Button::Keyboard(key) => {
+                    handle_key(key, &mut p, &pieces);
+                }
+                _ => {}
+            }
+        }
+    }
+}
+
 fn random_piece() -> Piece {
     PIECES.choose(&mut rand::thread_rng()).unwrap()()
 }
@@ -69,7 +111,7 @@ fn check_clear(pieces: &mut Vec<ColPoint>) {
         .collect();
 }
 
-fn update(p: &mut Piece, pieces: &mut Vec<ColPoint>, rate: &mut i8) -> bool {
+fn update(p: &mut Piece, next: &mut Piece, pieces: &mut Vec<ColPoint>, rate: &mut i8) -> bool {
     print!("\x1B[2J\x1B[1;1H");
     *rate += 1;
     if *rate == RATE {
@@ -85,7 +127,8 @@ fn update(p: &mut Piece, pieces: &mut Vec<ColPoint>, rate: &mut i8) -> bool {
                     });
                 }
                 check_clear(pieces);
-                *p = random_piece();
+                *p = *next;
+                *next = random_piece();
             } // if outside screen & illegal position, end game
             States::End => return false,
             _ => {}
@@ -139,7 +182,7 @@ fn render(
                     );
                 } else if shadow.shape.contains(&(x, y)) {
                     rectangle(
-                        [0.4, 0.4, 0.4, 1.0],
+                        SHADOWCOLOR,
                         [
                             x as f64 * CELLSIZE,
                             y as f64 * CELLSIZE - TOP_PAD,
@@ -162,47 +205,6 @@ fn handle_key(key: Key, p: &mut Piece, pieces: &Vec<ColPoint>) {
         Key::Up => p.rotate(&pieces),
         Key::Down => p.put_down(&pieces),
         _ => {}
-    }
-}
-
-fn main() {
-    // grav rate
-    let mut rate = 0;
-    // Vector holding still pieces
-    let mut pieces: Vec<ColPoint> = Vec::new();
-    let mut p = random_piece();
-    let mut shadow = Shadow::new(&p);
-
-    // GUI setup
-    let opengl = OpenGL::V3_2;
-    let mut window: Window = WindowSettings::new("Tetris Clone", WINSIZE)
-        .graphics_api(opengl)
-        .exit_on_esc(true)
-        .resizable(false)
-        .decorated(true)
-        .build()
-        .unwrap();
-    let mut gl = GlGraphics::new(opengl);
-    let mut events = Events::new(EventSettings::new());
-
-    // Main loop
-    while let Some(e) = events.next(&mut window) {
-        if let Some(_) = e.update_args() {
-            // UPDATE
-            if !update(&mut p, &mut pieces, &mut rate) {
-                break;
-            }
-        } else if let Some(args) = e.render_args() {
-            // RENDER
-            render(&mut gl, &args, &mut p, &mut shadow, &mut pieces);
-        } else if let Some(button) = e.press_args() {
-            match button {
-                Button::Keyboard(key) => {
-                    handle_key(key, &mut p, &pieces);
-                }
-                _ => {}
-            }
-        }
     }
 }
 
