@@ -22,7 +22,7 @@ pub fn update(
     *rate += 1;
     if rate == mrate {
         *rate = 0;
-        if !move_down(p, next, pieces, score, cl) {
+        if !move_down(p, next, pieces, score, rate, mrate, cl) {
             return false;
         }
     }
@@ -36,6 +36,8 @@ fn move_down(
     next: &mut Piece,
     pieces: &mut Vec<ColPoint>,
     score: &mut u32,
+    rate: &mut i8,
+    mrate: &mut i8,
     cl: &mut u32,
 ) -> bool {
     match p.down(1, pieces) {
@@ -49,10 +51,7 @@ fn move_down(
                 });
             }
             *score += match check_clear(pieces) {
-                0 => {
-                    *cl += 1;
-                    0
-                }
+                0 => 0,
                 1 => {
                     *cl += 1;
                     120
@@ -65,8 +64,16 @@ fn move_down(
                     *cl += 1;
                     600
                 }
-                _ => 2400,
+                _ => {
+                    *cl += 1;
+                    2400
+                }
             };
+            if *cl >= 5 {
+                if *mrate > 0 {
+                    *mrate -= 1;
+                }
+            }
             *p = Piece::new_from_next(next);
             *next = random_piece();
         } // if outside screen & illegal position, end game
