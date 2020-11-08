@@ -11,11 +11,20 @@ pub struct Piece {
 }
 
 impl Piece {
+    fn adjust(x: f64, o: f64) -> i8 {
+        (x + ((MAXX as f64 / 2.0) - o).round()) as i8
+    }
+
     pub fn new(color: Color, shape: [Point; 4], origin: FPoint) -> Self {
+        let mut adj: [Point; 4] = [(0, 0); 4];
+        shape
+            .iter()
+            .enumerate()
+            .for_each(|(i, &p)| adj[i] = (Piece::adjust(p.0 as f64, origin.0), p.1));
         Self {
             color,
-            shape,
-            origin,
+            shape: adj,
+            origin: (Piece::adjust(origin.0, origin.0) as f64, origin.1),
         }
     }
 
@@ -45,6 +54,8 @@ impl Piece {
         // move in y axis
         let mut shape: [Point; 4] = [(0, 0); 4]; // shape after movement
         let mut origin: FPoint = self.origin; // origin after movement
+        let mut col: bool = false;
+        let mut outside: bool = false;
         for i in 0..self.shape.len() {
             shape[i] = (self.shape[i].0, self.shape[i].1 + c);
             origin = (self.origin.0, self.origin.1 + c as f64);
@@ -54,17 +65,22 @@ impl Piece {
                     color: [0.0; 4],
                 })
             {
-                return if shape[i].1 <= MAXY - BOARDY {
-                    States::End // return End if illegal position & outside screen
-                } else {
-                    States::Stop // else return Stop
-                };
+                col = true;
+            }
+            if shape[i].1 <= MAXY - BOARDY {
+                outside = true;
             }
         }
-        // set shape and origin to moved values & return Nothing
-        self.shape = shape;
-        self.origin = origin;
-        States::Nothing
+        return if outside && col {
+            States::End // return End if illegal position & outside screen
+        } else if col {
+            States::Stop // else if only illegal position return Stop
+        } else {
+            // else set shape and origin to moved values & return Nothing
+            self.shape = shape;
+            self.origin = origin;
+            States::Nothing
+        };
     }
 
     pub fn put_down(&mut self, pieces: &Vec<ColPoint>) {
