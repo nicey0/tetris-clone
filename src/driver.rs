@@ -1,4 +1,3 @@
-use super::key::*;
 use super::state::State;
 use piston_window::*;
 
@@ -27,7 +26,7 @@ impl State {
                         .draw_2d(&e, |c, g, _d| self.draw_letter(&c, g, i, ch, &mut font));
                 }
             } else if let Some(button) = e.press_args() {
-                handle_button(button, &mut p, &pieces, &mut rate, &mrate);
+                self.handle_button(button);
             }
         }
     }

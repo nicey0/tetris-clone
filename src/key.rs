@@ -1,43 +1,32 @@
-use super::colpoint::ColPoint;
-use super::pieces::Piece;
+use super::state::State;
 use super::util::*;
 use piston_window::{Button, Key};
 
-pub fn handle_button(
-    button: Button,
-    p: &mut Piece,
-    pieces: &Vec<ColPoint>,
-    rate: &mut u16,
-    mrate: &u16,
-) {
-    match button {
-        Button::Keyboard(key) => {
-            handle_key(key, p, &pieces, rate, mrate);
+impl State {
+    pub fn handle_button(&mut self, button: Button) {
+        match button {
+            Button::Keyboard(key) => {
+                self.handle_key(key);
+            }
+            _ => {}
         }
-        _ => {}
     }
-}
 
-fn handle_key(
-    key: Key,
-    p: &mut Piece,
-    pieces: &Vec<ColPoint>,
-    rate: &mut u16,
-    &mrate: &u16,
-) -> States {
-    match key {
-        Key::Right => p.side(1, &pieces),
-        Key::Left => p.side(-1, &pieces),
-        Key::Up => p.rotate(&pieces),
-        Key::Down => {
-            *rate = mrate;
-        }
-        Key::Space => {
-            *rate = mrate;
-            p.put_down(&pieces)
-        }
-        Key::P => return States::Pause,
-        _ => {}
-    };
-    States::Nothing
+    fn handle_key(&mut self, key: Key) -> States {
+        match key {
+            Key::Right => self.p.side(1, &self.pieces),
+            Key::Left => self.p.side(-1, &self.pieces),
+            Key::Up => self.p.rotate(&self.pieces),
+            Key::Down => {
+                self.rate = self.mrate;
+            }
+            Key::Space => {
+                self.rate = self.mrate;
+                self.p.put_down(&self.pieces)
+            }
+            Key::P => return States::Pause,
+            _ => {}
+        };
+        States::Nothing
+    }
 }

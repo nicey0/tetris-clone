@@ -8,7 +8,7 @@ use super::state::State;
 use super::util::*;
 
 impl State {
-    pub fn update(&self) -> bool {
+    pub fn update(&mut self) -> bool {
         print!("\x1B[2J\x1B[1;1H");
         println!("{} / {}", self.rate, self.mrate);
         self.rate += 1;
@@ -23,7 +23,7 @@ impl State {
         true
     }
 
-    fn move_down(&self) -> bool {
+    fn move_down(&mut self) -> bool {
         match self.p.down(1, &self.pieces) {
             // gravity
             States::Stop => {
@@ -66,7 +66,7 @@ impl State {
         true
     }
 
-    fn check_clear(&self) -> usize {
+    fn check_clear(&mut self) -> usize {
         // Vector of cleared y's
         let mut cleared: Vec<i8> = Vec::with_capacity(BOARDY as usize);
         // HashMap holding {y: width}
