@@ -2,12 +2,12 @@ use std::collections::HashMap;
 
 use super::colpoint::ColPoint;
 use super::conf::*;
-use super::game::State;
+use super::game::Game;
 use super::pieces::Piece;
 use super::shadow::Shadow;
 use super::util::*;
 
-impl State {
+impl Game {
     pub fn update(&mut self) -> bool {
         self.rate += 1;
         if self.rate >= self.mrate {

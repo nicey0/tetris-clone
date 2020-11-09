@@ -3,9 +3,10 @@ use super::conf::*;
 use super::pieces::Piece;
 use super::shadow::Shadow;
 use super::util::*;
+use piston_window::*;
 
 #[derive(Debug)]
-pub struct State {
+pub struct Game {
     pub rate: u16,
     pub mrate: u16,
     pub cl: u8,
@@ -17,7 +18,7 @@ pub struct State {
 }
 
 // Driver code
-impl State {
+impl Game {
     pub fn new() -> Self {
         let p = random_piece();
         Self {
@@ -33,4 +34,38 @@ impl State {
             score: 0,
         }
     }
+
+    pub fn mainloop(&mut self, window: &mut PistonWindow) {
+        let mut font = window
+            .load_font("fonts/FiraSans-Regular.ttf")
+            .expect("error loading font");
+        while let Some(e) = window.next() {
+            if let Some(_) = e.update_args() {
+                // UPDATE
+                print!("\x1B[2J\x1B[1;1H");
+                println!("{} / {}", self.rate, self.mrate);
+                if !self.update() {
+                    break;
+                }
+            } else if let Some(_) = e.render_args() {
+                // RENDER
+                window.draw_2d(&e, |c, g, _d| {
+                    clear([0.1, 0.1, 0.1, 1.0], g);
+                    self.draw_well(&c, g);
+                    self.draw_next(&c, g);
+                    self.draw_pieces(&c, g);
+                });
+                //for (i, ch) in self.score.to_string().chars().enumerate() {
+                window.draw_2d(&e, |c, g, _d| self.draw_letter(&c, g, "aaabbb", &mut font));
+            } else if let Some(button) = e.press_args() {
+                self.handle_button(button);
+            }
+        }
+    }
 }
+//let mut font = Glyphs::from_bytes(
+//include_bytes!("../fonts/FiraSans-Regular.ttf"),
+//window.create_texture_context(),
+//TextureSettings::new(),
+//)
+//.unwrap();

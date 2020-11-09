@@ -2,10 +2,10 @@ use piston_window::*;
 
 use super::colpoint::ColPoint;
 use super::conf::*;
-use super::game::State;
+use super::game::Game;
 use super::util::*;
 
-impl State {
+impl Game {
     pub fn draw_well(&self, c: &Context, g: &mut G2d) {
         rectangle(
             [0.0, 0.0, 0.0, 1.0],
