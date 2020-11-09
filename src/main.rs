@@ -1,15 +1,15 @@
 mod colpoint;
 mod conf;
+mod game;
 mod key;
 mod piece_defs;
 mod pieces;
 mod render;
 mod shadow;
-mod state;
 mod update;
 mod util;
+use game::State;
 use piston_window::*;
-use state::State;
 use util::*;
 
 fn main() {

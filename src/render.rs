@@ -2,7 +2,7 @@ use piston_window::*;
 
 use super::colpoint::ColPoint;
 use super::conf::*;
-use super::state::State;
+use super::game::State;
 use super::util::*;
 
 impl State {

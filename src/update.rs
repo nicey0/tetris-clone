@@ -2,9 +2,9 @@ use std::collections::HashMap;
 
 use super::colpoint::ColPoint;
 use super::conf::*;
+use super::game::State;
 use super::pieces::Piece;
 use super::shadow::Shadow;
-use super::state::State;
 use super::util::*;
 
 impl State {

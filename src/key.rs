@@ -1,4 +1,4 @@
-use super::state::State;
+use super::game::State;
 use super::util::*;
 use piston_window::{Button, Key};
 
