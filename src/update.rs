@@ -9,8 +9,6 @@ use super::util::*;
 
 impl State {
     pub fn update(&mut self) -> bool {
-        print!("\x1B[2J\x1B[1;1H");
-        println!("{} / {}", self.rate, self.mrate);
         self.rate += 1;
         if self.rate >= self.mrate {
             self.rate = 0;

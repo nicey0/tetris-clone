@@ -4,8 +4,7 @@ use super::pieces::Piece;
 use super::shadow::Shadow;
 use super::util::*;
 
-use piston_window::*;
-
+#[derive(Debug)]
 pub struct State {
     pub rate: u16,
     pub mrate: u16,

@@ -7,7 +7,7 @@ pub const CELLSIZE: f64 = 20.0;
 // FPS
 pub const FPS: u64 = 25;
 // gravity
-pub const INIRATE: u16 = 25; // lower rate = faster drop
+pub const INIRATE: u16 = 35; // lower rate = faster drop
 
 // piece colors
 pub const COL_I: Color = [0.0, 1.0, 1.0, 1.0];

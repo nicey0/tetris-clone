@@ -2,6 +2,7 @@ use super::colpoint::ColPoint;
 use super::pieces::*;
 use super::util::*;
 
+#[derive(Debug)]
 pub struct Shadow {
     pub shape: [Point; 4],
 }

@@ -1,5 +1,6 @@
 use super::util::*;
 
+#[derive(Debug)]
 pub struct ColPoint {
     pub point: Point,
     pub color: Color,

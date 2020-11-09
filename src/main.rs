@@ -24,7 +24,7 @@ fn main() {
         .decorated(true)
         .build()
         .unwrap();
-    window.set_ups(FPS);
-    window.set_max_fps(FPS);
+    //window.set_ups(FPS);
+    //window.set_max_fps(FPS);
     game.mainloop(&mut window);
 }
