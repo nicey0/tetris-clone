@@ -36,9 +36,9 @@ impl Game {
     }
 
     pub fn mainloop(&mut self, window: &mut PistonWindow) {
-        let mut font = window
+        let mut glyphs = window
             .load_font("fonts/FiraSans-Regular.ttf")
-            .expect("error loading font");
+            .expect("error loading font!");
         while let Some(e) = window.next() {
             if let Some(_) = e.update_args() {
                 // UPDATE
@@ -56,10 +56,10 @@ impl Game {
                     self.draw_next(&c, g);
                     self.draw_pieces(&c, g);
                 });
-                //for (i, ch) in self.score.to_string().chars().enumerate() {
-                window.draw_2d(&e, |c, g, _d| self.draw_text(&c, g, "aaa", &mut font));
-                window.draw_2d(&e, |c, g, _d| self.draw_text(&c, g, "bbb", &mut font));
-                window.draw_2d(&e, |c, g, _d| self.draw_text(&c, g, "aaa", &mut font));
+                window.draw_2d(&e, |c, g, dev| {
+                    self.draw_text(&c, g, &self.score.to_string(), &mut glyphs);
+                    glyphs.factory.encoder.flush(dev);
+                });
             } else if let Some(button) = e.press_args() {
                 self.handle_button(button);
             }

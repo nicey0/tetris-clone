@@ -45,13 +45,13 @@ impl Game {
         }
     }
 
-    pub fn draw_text(&self, c: &Context, g: &mut G2d, text: &str, font: &mut Glyphs) {
+    pub fn draw_text(&self, c: &Context, g: &mut G2d, text: &str, glyphs: &mut Glyphs) {
         //println!("{:?}", score);
-        Text::new_color([1.0; 4], CELLSIZE as u32)
+        Text::new_color([1.0; 4], (CELLSIZE as f64 * 0.75) as u32)
             .draw(
                 text,
-                font,
-                &DrawState::default(),
+                glyphs,
+                &c.draw_state,
                 c.transform.trans(
                     WELLWIDTH + CELLSIZE,
                     CELLSIZE * 2.0 + NHEIGHT + CELLSIZE / 2.0,
