@@ -8,17 +8,17 @@ use super::shadow::Shadow;
 use super::util::*;
 
 impl Game {
-    pub fn update(&mut self) -> bool {
+    pub fn update(&mut self) -> States {
+        self.shadow = Shadow::new(&self.p);
+        self.shadow.put_down(&self.pieces);
         self.rate += 1;
         if self.rate >= self.mrate {
             self.rate = 0;
             if !self.move_down() {
-                return false;
-            }
+                return States::End;
+            };
         }
-        self.shadow = Shadow::new(&self.p);
-        self.shadow.put_down(&self.pieces);
-        true
+        States::Nothing
     }
 
     fn move_down(&mut self) -> bool {

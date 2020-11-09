@@ -27,5 +27,6 @@ pub enum States {
     Stop,
     End,
     Pause,
+    DrawStatic,
     Nothing,
 }

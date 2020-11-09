@@ -1,9 +1,10 @@
 use super::util::Color;
 
-// board dimensions
+// board
 pub const MAXX: i8 = 10;
 pub const BOARDY: i8 = 20;
 pub const CELLSIZE: f64 = 20.0;
+pub const BACKGROUND: Color = [0.1, 0.1, 0.1, 1.0];
 // FPS
 pub const FPS: u64 = 25;
 // gravity
