@@ -4,7 +4,17 @@ use super::util::Color;
 pub const MAXX: i8 = 10;
 pub const BOARDY: i8 = 20;
 pub const CELLSIZE: f64 = 20.0;
-pub const BACKGROUND: Color = [0.1, 0.1, 0.1, 1.0];
+
+pub const WELL: Color = [0.05, 0.05, 0.05, 1.0];
+pub const RIGHT: Color = [0.25, 0.25, 0.25, 1.0];
+pub const NEXT: Color = [0.1, 0.1, 0.1, 1.0];
+
+// clears for next level
+pub const CLEARS: u8 = 15;
+
+// rate lost per level
+pub const RL: u16 = 5;
+
 // FPS
 pub const FPS: u64 = 35;
 // gravity

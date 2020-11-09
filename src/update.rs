@@ -40,25 +40,26 @@ impl Game {
                 self.score += match self.check_clear() {
                     1 => {
                         self.cl += 1;
-                        120
+                        40 * (self.level + 1) as u32
                     }
                     2 => {
                         self.cl += 2;
-                        200
+                        100 * (self.level + 1) as u32
                     }
                     3 => {
                         self.cl += 3;
-                        600
+                        300 * (self.level + 1) as u32
                     }
                     4 => {
                         self.cl += 4;
-                        2400
+                        1200 * (self.level + 1) as u32
                     }
                     _ => 0,
                 };
-                if self.cl >= 5 && self.mrate > 0 {
+                if self.cl >= CLEARS && self.mrate >= RL {
                     self.cl = 0;
-                    self.mrate -= 1;
+                    self.mrate -= RL;
+                    self.level += 1;
                 }
                 self.p = Piece::new_from_next(&self.next);
                 self.next = random_piece();

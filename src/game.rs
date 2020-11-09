@@ -9,6 +9,7 @@ use piston_window::*;
 pub struct Game {
     pub rate: u16,             // gravity
     pub mrate: u16,            // rate == mrate: do_gravity
+    pub level: u16,            // current level
     pub cl: u8,                // cleared line counter
     pub p: Piece,              // current piece
     pub shadow: Shadow,        // current pieces shadow (thingy at the bottom)
@@ -23,13 +24,14 @@ impl Game {
         let p = random_piece();
         Self {
             //  gravity
-            mrate: INIRATE,
-            cl: 0,
             rate: 0,
-            pieces: Vec::new(),
+            mrate: INIRATE,
+            level: 0,
+            cl: 0,
             p,
             shadow: Shadow::new(&p),
             next: random_piece(),
+            pieces: Vec::new(),
             score: 0,
         }
     }
@@ -50,13 +52,36 @@ impl Game {
             } else if let Some(_) = e.render_args() {
                 // RENDER
                 window.draw_2d(&e, |c, g, _d| {
-                    clear(BACKGROUND, g);
-                    self.draw_well(&c, g);
+                    clear(WELL, g);
+                    self.draw_right(&c, g);
                     self.draw_next(&c, g);
                     self.draw_pieces(&c, g);
                 });
                 window.draw_2d(&e, |c, g, dev| {
-                    self.draw_text(&c, g, &self.score.to_string(), &mut glyphs);
+                    self.draw_text(
+                        &c,
+                        g,
+                        &format!("Score: {}", self.score),
+                        &mut glyphs,
+                        0.0,
+                        0.0,
+                    );
+                    self.draw_text(
+                        &c,
+                        g,
+                        &format!("Level: {}", self.level),
+                        &mut glyphs,
+                        0.0,
+                        CELLSIZE,
+                    );
+                    self.draw_text(
+                        &c,
+                        g,
+                        &format!("Clears: {}", CLEARS - self.cl),
+                        &mut glyphs,
+                        0.0,
+                        CELLSIZE * 2.0,
+                    );
                     glyphs.factory.encoder.flush(dev);
                 });
             } else if let Some(button) = e.press_args() {

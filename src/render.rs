@@ -6,19 +6,14 @@ use super::game::Game;
 use super::util::*;
 
 impl Game {
-    pub fn draw_well(&self, c: &Context, g: &mut G2d) {
-        rectangle(
-            [0.0, 0.0, 0.0, 1.0],
-            [0.0, 0.0, WELLWIDTH, WINSIZE.1],
-            c.transform,
-            g,
-        );
+    pub fn draw_right(&self, c: &Context, g: &mut G2d) {
+        rectangle(RIGHT, [WELLWIDTH, 0.0, RWIDTH, WINSIZE.1], c.transform, g);
     }
 
     pub fn draw_next(&self, c: &Context, g: &mut G2d) {
         // draw next piece background bit
         rectangle(
-            [0.3, 0.3, 0.3, 1.0],
+            NEXT,
             [WELLWIDTH + CELLSIZE, CELLSIZE, NWIDTH, NHEIGHT],
             c.transform,
             g,
@@ -45,16 +40,23 @@ impl Game {
         }
     }
 
-    pub fn draw_text(&self, c: &Context, g: &mut G2d, text: &str, glyphs: &mut Glyphs) {
-        //println!("{:?}", score);
+    pub fn draw_text(
+        &self,
+        c: &Context,
+        g: &mut G2d,
+        text: &str,
+        glyphs: &mut Glyphs,
+        x: f64,
+        y: f64,
+    ) {
         Text::new_color([1.0; 4], (CELLSIZE as f64 * 0.75) as u32)
             .draw(
                 text,
                 glyphs,
                 &c.draw_state,
                 c.transform.trans(
-                    WELLWIDTH + CELLSIZE,
-                    CELLSIZE * 2.0 + NHEIGHT + CELLSIZE / 2.0,
+                    (WELLWIDTH + CELLSIZE) + x,
+                    (CELLSIZE * 2.0 + NHEIGHT + CELLSIZE / 2.0) + y,
                 ),
                 g,
             )
