@@ -1,5 +1,6 @@
 mod colpoint;
 mod conf;
+mod driver;
 mod key;
 mod piece_defs;
 mod pieces;
@@ -8,6 +9,7 @@ mod shadow;
 mod state;
 mod update;
 mod util;
+use driver::*;
 use state::State;
 
 fn main() {
