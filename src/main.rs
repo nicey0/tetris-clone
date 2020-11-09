@@ -1,5 +1,3 @@
-use piston_window::*;
-
 mod colpoint;
 mod conf;
 mod key;
@@ -7,28 +5,13 @@ mod piece_defs;
 mod pieces;
 mod render;
 mod shadow;
+mod state;
 mod update;
 mod util;
-use colpoint::ColPoint;
-use conf::*;
-use key::*;
-use pieces::Piece;
-use render::*;
-use shadow::Shadow;
-use update::*;
-use util::*;
+use state::State;
 
 fn main() {
-    // grav rate
-    let mut mrate = INIRATE;
-    let mut cl = 0;
-    let mut rate = 0;
-    // Vector holding still pieces
-    let mut pieces: Vec<ColPoint> = Vec::new();
-    let mut p = random_piece();
-    let mut shadow = Shadow::new(&p);
-    let mut next = random_piece();
-    let mut score: u32 = 0;
+    let game = State::new();
 
     // GUI setup
     let opengl = OpenGL::V3_2;
