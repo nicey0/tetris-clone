@@ -17,9 +17,10 @@ pub fn update(
     mrate: &mut u16,
     cl: &mut u32,
 ) -> bool {
-    //print!("\x1B[2J\x1B[1;1H");
+    print!("\x1B[2J\x1B[1;1H");
+    println!("{} / {}", rate, mrate);
     *rate += 1;
-    if rate == mrate {
+    if rate >= mrate {
         *rate = 0;
         if !move_down(p, next, pieces, score, mrate, cl) {
             return false;
@@ -49,29 +50,27 @@ fn move_down(
                 });
             }
             *score += match check_clear(pieces) {
-                0 => 0,
                 1 => {
                     *cl += 1;
                     120
                 }
                 2 => {
-                    *cl += 1;
+                    *cl += 2;
                     200
                 }
                 3 => {
-                    *cl += 1;
+                    *cl += 3;
                     600
                 }
-                _ => {
-                    *cl += 1;
+                4 => {
+                    *cl += 4;
                     2400
                 }
+                _ => 0,
             };
-            if *cl >= 5 {
-                if *mrate > 0 {
-                    *cl = 0;
-                    *mrate -= 1;
-                }
+            if *cl >= 5 && *mrate > 0 {
+                *cl = 0;
+                *mrate -= 1;
             }
             *p = Piece::new_from_next(next);
             *next = random_piece();

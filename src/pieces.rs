@@ -137,7 +137,6 @@ impl Piece {
             // return if illegal position
             if shape[i].0 < 0
                 || shape[i].0 >= MAXX
-                || shape[i].1 < 0
                 || shape[i].1 >= MAXY
                 || pieces.contains(&ColPoint {
                     point: shape[i],
