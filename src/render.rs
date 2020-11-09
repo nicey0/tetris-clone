@@ -1,3 +1,4 @@
+use piston_window::glyph_cache::rusttype::GlyphCache;
 use piston_window::*;
 
 use super::colpoint::ColPoint;
@@ -45,22 +46,20 @@ pub fn draw_next(c: &Context, g: &mut G2d, next: &Piece) {
     }
 }
 
-pub fn draw_score(c: &Context, g: &mut G2d, score: &u32, cache: &mut Glyphs) {
-    println!("{}", score);
-    match text(
-        [1.0; 4],
-        CELLSIZE.round() as u32,
-        &score.to_string(),
-        cache,
-        c.transform.trans(
-            (WELLWIDTH + CELLSIZE).round(),
-            CELLSIZE * 2.0 + NHEIGHT + CELLSIZE / 2.0,
-        ),
-        g,
-    ) {
-        Ok(_) => {}
-        Err(e) => eprintln!("{}", e),
-    };
+pub fn draw_letter(c: &Context, g: &mut G2d, i: usize, letter: char, font: &mut Glyphs) {
+    //println!("{:?}", score);
+    Text::new_color([1.0; 4], CELLSIZE as u32)
+        .draw(
+            &letter.to_string(),
+            font,
+            &DrawState::default(),
+            c.transform.trans(
+                WELLWIDTH + CELLSIZE + i as f64 * (CELLSIZE / 1.6),
+                CELLSIZE * 2.0 + NHEIGHT + CELLSIZE / 2.0,
+            ),
+            g,
+        )
+        .expect("error drawing text!");
 }
 
 pub fn draw_pieces(c: &Context, g: &mut G2d, p: &Piece, shadow: &Shadow, pieces: &Vec<ColPoint>) {

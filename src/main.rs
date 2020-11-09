@@ -39,17 +39,7 @@ fn main() {
         .decorated(true)
         .build()
         .unwrap();
-    let font_data: &[u8] = include_bytes!("../fonts/FiraSans-Regular.ttf");
-    let mut cache = Glyphs::from_bytes(
-        font_data,
-        window.create_texture_context(),
-        TextureSettings::new(),
-    )
-    .unwrap();
-    match cache.preload_chars(CELLSIZE.round() as u32, "0123456789".chars()) {
-        Ok(_) => {}
-        Err(e) => eprintln!("{}", e),
-    };
+    let mut font;
 
     // Main loop
     while let Some(e) = window.next() {
@@ -73,9 +63,15 @@ fn main() {
                 clear([0.1, 0.1, 0.1, 1.0], g);
                 draw_well(&c, g);
                 draw_next(&c, g, &next);
-                draw_score(&c, g, &score, &mut cache);
                 draw_pieces(&c, g, &p, &shadow, &pieces);
             });
+            for (i, ch) in score.to_string().chars().enumerate() {
+                font = match window.load_font("fonts/FiraSans-Regular.ttf") {
+                    Ok(f) => f,
+                    Err(e) => panic!("{}", e),
+                };
+                window.draw_2d(&e, |c, g, _d| draw_letter(&c, g, i, ch, &mut font));
+            }
         } else if let Some(button) = e.press_args() {
             handle_button(button, &mut p, &pieces);
         }

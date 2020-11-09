@@ -17,7 +17,7 @@ pub fn update(
     mrate: &mut u16,
     cl: &mut u32,
 ) -> bool {
-    print!("\x1B[2J\x1B[1;1H");
+    //print!("\x1B[2J\x1B[1;1H");
     *rate += 1;
     if rate == mrate {
         *rate = 0;
