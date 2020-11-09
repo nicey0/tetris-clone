@@ -47,7 +47,6 @@ pub fn draw_next(c: &Context, g: &mut G2d, next: &Piece) {
 
 pub fn draw_score(c: &Context, g: &mut G2d, score: &u32, cache: &mut Glyphs) {
     println!("{}", score);
-    let score = 200;
     match text(
         [1.0; 4],
         CELLSIZE.round() as u32,
@@ -60,7 +59,7 @@ pub fn draw_score(c: &Context, g: &mut G2d, score: &u32, cache: &mut Glyphs) {
         g,
     ) {
         Ok(_) => {}
-        Err(e) => eprintln!("AAAAAAAAAAAAAAAA!!\n{}", e),
+        Err(e) => eprintln!("{}", e),
     };
 }
 

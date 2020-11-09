@@ -46,6 +46,10 @@ fn main() {
         TextureSettings::new(),
     )
     .unwrap();
+    match cache.preload_chars(CELLSIZE.round() as u32, "0123456789".chars()) {
+        Ok(_) => {}
+        Err(e) => eprintln!("{}", e),
+    };
 
     // Main loop
     while let Some(e) = window.next() {
