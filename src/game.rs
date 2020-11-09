@@ -43,8 +43,8 @@ impl Game {
         while let Some(e) = window.next() {
             if let Some(_) = e.update_args() {
                 // UPDATE
-                print!("\x1B[2J\x1B[1;1H"); // clear screen
-                println!("{} / {}", self.rate, self.mrate);
+                //print!("\x1B[2J\x1B[1;1H"); // clear screen
+                //println!("{} / {}", self.rate, self.mrate);
                 match self.update() {
                     States::End => break,
                     _ => {}
