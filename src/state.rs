@@ -1,22 +1,19 @@
 use super::colpoint::ColPoint;
 use super::conf::*;
-use super::key::*;
 use super::pieces::Piece;
-use super::render::*;
 use super::shadow::Shadow;
-use super::update::*;
 use super::util::*;
 
 use piston_window::*;
 
 pub struct State {
+    pub rate: u16,
     pub mrate: u16,
     pub cl: u8,
-    pub rate: u8,
-    pub pieces: Vec<ColPoint>,
     pub p: Piece,
     pub shadow: Shadow,
     pub next: Piece,
+    pub pieces: Vec<ColPoint>,
     pub score: u32,
     pub window: PistonWindow,
 }

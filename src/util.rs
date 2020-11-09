@@ -1,3 +1,5 @@
+use rand::seq::SliceRandom;
+
 use super::conf::BOARDY;
 use super::conf::*;
 use super::piece_defs::*;
@@ -16,6 +18,10 @@ pub const PIECES: [fn() -> Piece; 7] = [i, o, j, l, s, z, t];
 pub type Color = [f32; 4];
 pub type Point = (i8, i8);
 pub type FPoint = (f64, f64);
+
+pub fn random_piece() -> Piece {
+    PIECES.choose(&mut rand::thread_rng()).unwrap()()
+}
 
 pub enum States {
     Stop,
