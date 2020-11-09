@@ -1,8 +1,8 @@
-use super::game::State;
+use super::game::Game;
 use super::util::*;
 use piston_window::{Button, Key};
 
-impl State {
+impl Game {
     pub fn handle_button(&mut self, button: Button) {
         match button {
             Button::Keyboard(key) => {
