@@ -18,7 +18,6 @@ pub fn update(
     cl: &mut u32,
 ) -> bool {
     print!("\x1B[2J\x1B[1;1H");
-    println!("{}", score);
     *rate += 1;
     if rate == mrate {
         *rate = 0;

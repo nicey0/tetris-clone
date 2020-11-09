@@ -39,6 +39,13 @@ fn main() {
         .decorated(true)
         .build()
         .unwrap();
+    let font_data: &[u8] = include_bytes!("../fonts/FiraSans-Regular.ttf");
+    let mut cache = Glyphs::from_bytes(
+        font_data,
+        window.create_texture_context(),
+        TextureSettings::new(),
+    )
+    .unwrap();
 
     // Main loop
     while let Some(e) = window.next() {
@@ -62,7 +69,7 @@ fn main() {
                 clear([0.1, 0.1, 0.1, 1.0], g);
                 draw_well(&c, g);
                 draw_next(&c, g, &next);
-                draw_score(&c, g, &score);
+                draw_score(&c, g, &score, &mut cache);
                 draw_pieces(&c, g, &p, &shadow, &pieces);
             });
         } else if let Some(button) = e.press_args() {

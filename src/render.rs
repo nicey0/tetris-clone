@@ -45,9 +45,23 @@ pub fn draw_next(c: &Context, g: &mut G2d, next: &Piece) {
     }
 }
 
-pub fn draw_score(c: &Context, g: &mut G2d, score: &u32) {
+pub fn draw_score(c: &Context, g: &mut G2d, score: &u32, cache: &mut Glyphs) {
     println!("{}", score);
-    //let font_data: &[u8] = include_bytes!("../fonts/FiraSans-Regular.ttf");
+    let score = 200;
+    match text(
+        [1.0; 4],
+        CELLSIZE.round() as u32,
+        &score.to_string(),
+        cache,
+        c.transform.trans(
+            (WELLWIDTH + CELLSIZE).round(),
+            CELLSIZE * 2.0 + NHEIGHT + CELLSIZE / 2.0,
+        ),
+        g,
+    ) {
+        Ok(_) => {}
+        Err(e) => eprintln!("AAAAAAAAAAAAAAAA!!\n{}", e),
+    };
 }
 
 pub fn draw_pieces(c: &Context, g: &mut G2d, p: &Piece, shadow: &Shadow, pieces: &Vec<ColPoint>) {
