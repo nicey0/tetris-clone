@@ -14,8 +14,12 @@ impl Game {
 
     fn handle_key(&mut self, key: Key) -> States {
         match key {
-            Key::Right => self.p.side(1, &self.pieces),
-            Key::Left => self.p.side(-1, &self.pieces),
+            Key::Right => {
+                self.p.side(1, &self.pieces);
+            }
+            Key::Left => {
+                self.p.side(-1, &self.pieces);
+            }
             Key::Up => self.p.rotate(&self.pieces),
             Key::Down => {
                 self.rate = self.mrate;

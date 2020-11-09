@@ -6,9 +6,9 @@ pub const BOARDY: i8 = 20;
 pub const CELLSIZE: f64 = 20.0;
 pub const BACKGROUND: Color = [0.1, 0.1, 0.1, 1.0];
 // FPS
-pub const FPS: u64 = 25;
+pub const FPS: u64 = 35;
 // gravity
-pub const INIRATE: u16 = 35; // lower rate = faster drop
+pub const INIRATE: u16 = 45; // lower rate = faster drop
 
 // piece colors
 pub const COL_I: Color = [0.0, 1.0, 1.0, 1.0];

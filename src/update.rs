@@ -9,8 +9,8 @@ use super::util::*;
 
 impl Game {
     pub fn update(&mut self) -> States {
-        self.shadow = Shadow::new(&self.p);
-        self.shadow.put_down(&self.pieces);
+        // create shadow and put it down
+        self.update_shadow();
         self.rate += 1;
         if self.rate >= self.mrate {
             self.rate = 0;
@@ -19,6 +19,11 @@ impl Game {
             };
         }
         States::Nothing
+    }
+
+    fn update_shadow(&mut self) {
+        self.shadow = Shadow::new(&self.p);
+        self.shadow.put_down(&self.pieces);
     }
 
     fn move_down(&mut self) -> bool {

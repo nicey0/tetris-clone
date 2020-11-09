@@ -1,6 +1,7 @@
 use super::util::*;
 
 #[derive(Debug)]
+// Colored point (placed block chunk)
 pub struct ColPoint {
     pub point: Point,
     pub color: Color,

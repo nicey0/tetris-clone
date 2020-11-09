@@ -7,14 +7,14 @@ use piston_window::*;
 
 #[derive(Debug)]
 pub struct Game {
-    pub rate: u16,
-    pub mrate: u16,
-    pub cl: u8,
-    pub p: Piece,
-    pub shadow: Shadow,
-    pub next: Piece,
-    pub pieces: Vec<ColPoint>,
-    pub score: u32,
+    pub rate: u16,             // gravity
+    pub mrate: u16,            // rate == mrate: do_gravity
+    pub cl: u8,                // cleared line counter
+    pub p: Piece,              // current piece
+    pub shadow: Shadow,        // current pieces shadow (thingy at the bottom)
+    pub next: Piece,           // next piece
+    pub pieces: Vec<ColPoint>, // placed blocks
+    pub score: u32,            // current score
 }
 
 // Driver code
@@ -26,7 +26,6 @@ impl Game {
             mrate: INIRATE,
             cl: 0,
             rate: 0,
-            // Vector holding still pieces
             pieces: Vec::new(),
             p,
             shadow: Shadow::new(&p),
@@ -42,7 +41,7 @@ impl Game {
         while let Some(e) = window.next() {
             if let Some(_) = e.update_args() {
                 // UPDATE
-                print!("\x1B[2J\x1B[1;1H");
+                print!("\x1B[2J\x1B[1;1H"); // clear screen
                 println!("{} / {}", self.rate, self.mrate);
                 match self.update() {
                     States::End => break,
