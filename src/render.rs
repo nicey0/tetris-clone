@@ -45,15 +45,15 @@ impl State {
         }
     }
 
-    pub fn draw_letter(&self, c: &Context, g: &mut G2d, i: usize, letter: char, font: &mut Glyphs) {
+    pub fn draw_letter(&self, c: &Context, g: &mut G2d, text: &str, font: &mut Glyphs) {
         //println!("{:?}", score);
         Text::new_color([1.0; 4], CELLSIZE as u32)
             .draw(
-                &letter.to_string(),
+                text,
                 font,
                 &DrawState::default(),
                 c.transform.trans(
-                    WELLWIDTH + CELLSIZE + i as f64 * (CELLSIZE / 1.6),
+                    WELLWIDTH + CELLSIZE,
                     CELLSIZE * 2.0 + NHEIGHT + CELLSIZE / 2.0,
                 ),
                 g,
