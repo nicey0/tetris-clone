@@ -12,27 +12,27 @@ No
 
 ### Files
 - colpoint.rs
-    ColPoint structure: holds a static (placed) block
+    - ColPoint structure: holds a static (placed) block
 - conf.rs
-    App configuration (colors, cell size, ...). Can be changed to whatever you'd like
+    - App configuration (colors, cell size, ...). Can be changed to whatever you'd like
 - game.rs
-    Game structure and mainloop
+    - Game structure and mainloop
 - key.rs
-    Key processing
+    - Key processing
 - main.rs
-    main.rs
+    - main.rs
 - piece_defs.rs
-    Piece constructor functions
+    - Piece constructor functions
 - pieces.rs
-    Piece structure definition
+    - Piece structure definition
 - render.rs
-    Rendering
+    - Rendering
 - shadow.rs
-    Shadow structure
+    - Shadow structure
 - update.rs
-    Updating
+    - Updating
 - util.rs
-    Utility stuff
+    - Utility stuff
 
 ### Screenshots
 ![](screenshots/1.png)
