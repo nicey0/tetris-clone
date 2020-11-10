@@ -2,7 +2,9 @@
 
 ### Running
 `$ git clone https://github.com/nicey0/tetris-clone.git`
+
 `$ cd tetris-clone`
+
 `$ cargo run`
 
 ### Installation
